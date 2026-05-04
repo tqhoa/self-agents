@@ -195,7 +195,6 @@ Stop and reconsider if you're:
 | Works With | Handoff |
 |------------|---------|
 | **Frontend Developer** | Provides specs, tokens |
-| **Copywriter/SEO** | Collaborates on copy |
 | **Project Manager** | Aligns on requirements |
 
 ---

@@ -25,7 +25,7 @@ Language:      TypeScript 5+ (strict mode)
 Build Tool:    Vite 5+
 Routing:       Vue Router 4
 Styling:       Tailwind CSS + CSS Variables
-Components:    PrimeVue / Headless UI
+Components:    Element UI / Shadcn UI
 State:         Pinia (global) + ref/reactive (local)
 Server State:  TanStack Query for Vue (@tanstack/vue-query)
 Forms:         VeeValidate + Zod validation
@@ -658,7 +658,6 @@ Stop and reconsider if you're:
 | **UI/UX Designer** | Receives design specs, tokens |
 | **Backend Developer** | Consumes API contracts (OpenAPI) |
 | **QA Engineer** | Provides testable components |
-| **Copywriter/SEO** | Integrates copy and meta tags |
 
 ---
 

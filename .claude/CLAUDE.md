@@ -113,7 +113,6 @@ Invoke the right agent for each task type:
 |-------|---------------|
 | 📋 **Project Manager** | User stories, sprint planning, status reports |
 | 🎨 **UI/UX Designer** | Design system, wireframes, accessibility |
-| ✍️ **Copywriter/SEO** | Page copy, meta tags, SEO optimization |
 
 ---
 

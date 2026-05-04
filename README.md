@@ -75,8 +75,7 @@ This repository provides a **production-grade configuration** for Claude Code AI
 │   ├── security-auditor.md      # Security Auditor
 │   ├── qa.md                    # QA Engineer
 │   ├── project-manager.md       # Project Manager
-│   ├── ui-ux-designer.md        # UI/UX Designer
-│   └── copywriter-seo.md        # Copywriter/SEO
+│   └── ui-ux-designer.md        # ui-ux-designer.md
 │
 ├── rules/                       # Mandatory rules (13 total)
 │   ├── clean-code.md            # Clean Code principles
@@ -136,7 +135,6 @@ This repository provides a **production-grade configuration** for Claude Code AI
 | ------------------- | ---------------------------- | ---------------- |
 | **Project Manager** | Stories, sprints, planning   | Project planning |
 | **UI/UX Designer**  | Design system, accessibility | UX decisions     |
-| **Copywriter/SEO**  | Copy, meta tags, SEO         | Content creation |
 
 ---
 

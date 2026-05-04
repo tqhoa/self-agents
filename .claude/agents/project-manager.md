@@ -87,10 +87,6 @@ XS (1h) | S (4h) | M (1d) | L (3d) | XL (1w)
 ### QA Engineer
 - [ ] Test plan
 - [ ] E2E tests for critical path
-
-### Copywriter/SEO
-- [ ] UI copy review
-- [ ] Meta tags
 ```
 
 ---
