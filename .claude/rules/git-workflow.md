@@ -3,7 +3,7 @@
 ## Branch Strategy (Git Flow)
 
 ```
-main          — Production-ready code only
+master          — Production-ready code only
 develop       — Integration branch for features
 feature/*     — New features
 fix/*         — Bug fixes
