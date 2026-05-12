@@ -23,7 +23,7 @@ This repository provides a **production-grade configuration** for Claude Code AI
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │                                                                  │
-│   /spec  →  /plan  →  /build  →  /test  →  /review  →  /deploy  │
+│   /spec  →  /plan  →  /build  →  /test  →  /review  →  /deploy   │
 │                                                                  │
 │   Define    Plan     Build     Verify    Review      Ship        │
 │                                                                  │
@@ -114,11 +114,11 @@ This repository provides a **production-grade configuration** for Claude Code AI
 
 ### Development Agents
 
-| Agent                  | Role                           | Invoke When              |
-| ---------------------- | ------------------------------ | ------------------------ |
-| **Frontend Developer** | Next.js, React, TypeScript, UI | Components, pages, state |
-| **Backend Developer**  | Express, Prisma, Redis, BullMQ | APIs, services, jobs     |
-| **Systems Architect**  | Architecture, ADRs, scaling    | System design decisions  |
+| Agent                  | Role                                         | Invoke When              |
+| ---------------------- | -------------------------------------------- | ------------------------ |
+| **Frontend Developer** | Vue.js, Element UI, TypeScript, Tailwind CSS | Components, pages, state |
+| **Backend Developer**  | Python, FastAPIm, PostgreSQL, Redis, BullMQ  | APIs, services, jobs     |
+| **Systems Architect**  | Architecture, ADRs, scaling                  | System design decisions  |
 
 ### Quality Agents
 
@@ -143,17 +143,17 @@ This repository provides a **production-grade configuration** for Claude Code AI
 | Layer                | Technology                              |
 | -------------------- | --------------------------------------- |
 | **Frontend (SEO)**   | Next.js 14 (App Router)                 |
-| **Frontend (Admin)** | React + Vite                            |
+| **Frontend (Admin)** | VueJS + Vite                            |
 | **Styling**          | Tailwind CSS + shadcn/ui                |
 | **State**            | Zustand + TanStack Query                |
-| **Backend**          | Express.js + TypeScript                 |
+| **Backend**          | Python + FastAPI                        |
 | **ORM**              | Prisma                                  |
 | **Database**         | PostgreSQL                              |
 | **Cache**            | Redis (ioredis)                         |
 | **Queue**            | BullMQ (simple) / RabbitMQ (enterprise) |
-| **Auth**             | NextAuth.js / JWT + bcrypt              |
+| **Auth**             | JWT + bcrypt                            |
 | **Testing**          | Vitest + Playwright                     |
-| **Monitoring**       | Prometheus + Grafana + Pino             |
+| **Monitoring**       | Prometheus + Grafana + loki             |
 | **CI/CD**            | GitHub Actions                          |
 | **Deploy**           | Vercel + Railway/Fly.io                 |
 
