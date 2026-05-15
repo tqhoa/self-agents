@@ -1,50 +1,105 @@
-# Review Command
+---
+name: review
+description: Five-axis code review before merge — correctness, readability, architecture, security, performance
+---
 
-## Description
-Perform a thorough code review of specified files or a pull request.
+# /review — Code Review
 
-## Usage
-Tell Claude: "Review [file/PR/feature]" or "Do a code review of [changes]"
+> "Approve when a change definitely improves code health, even if imperfect."
 
-## Review Checklist
+## Purpose
 
-### Code Quality
-- [ ] Code follows style guide (`.claude/rules/code-style.md`)
-- [ ] No unnecessary complexity or duplication
-- [ ] Functions are small and focused (single responsibility)
-- [ ] Variable and function names are descriptive
+Conduct a five-axis code review of specified files, a PR diff, or recent changes. Catch bugs, security issues, and design problems before merge.
 
-### Security
-- [ ] No hardcoded secrets or credentials
-- [ ] Input validation is present
-- [ ] Authentication/authorization checks in place
-- [ ] See `.claude/rules/security.md` for full checklist
+## Prerequisites
 
-### Error Handling
-- [ ] Errors are properly caught and handled
-- [ ] Meaningful error messages
-- [ ] No swallowed exceptions
-- [ ] See `.claude/rules/error-handling.md`
+- Code to review: file path, PR number, or `git diff` output
+- Understanding of what the change is trying to accomplish
 
-### Testing
-- [ ] Unit tests cover new logic
-- [ ] Edge cases are tested
-- [ ] Tests are readable and maintainable
-- [ ] See `.claude/rules/testing.md`
+## Workflow
 
-### Database
-- [ ] Queries are optimized (no N+1)
-- [ ] Transactions used where appropriate
-- [ ] See `.claude/rules/database.md`
+### Step 1: Understand the Change
 
-### API
-- [ ] Endpoints follow REST conventions
-- [ ] Request/response schemas are documented
-- [ ] See `.claude/rules/api-conventions.md`
+```bash
+# Review what changed
+git diff main...HEAD
+git log --oneline main...HEAD
+```
+
+- What is this change trying to do?
+- Is there a linked spec or issue?
+
+### Step 2: Review Tests First
+
+Tests reveal intent, expected behavior, and coverage gaps. Start here before reading implementation.
+
+### Step 3: Walk the Five Axes
+
+Full checklist: `.claude/agents/code-reviewer.md` and `.claude/skills/code-review/SKILL.md`
+
+| Axis | Key Questions |
+|------|--------------|
+| **Correctness** | Does it do what it claims? Edge cases handled? Error paths covered? |
+| **Readability** | Can another engineer understand this without help? Names clear? |
+| **Architecture** | Follows project patterns? Import direction correct? Abstraction appropriate? |
+| **Security** | Inputs validated? Auth enforced? No secrets? See `rules/security.md` |
+| **Performance** | N+1 queries? Unbounded operations? Missing indexes? |
+
+### Step 4: Check Project-Specific Rules
+
+**Backend (Python / FastAPI):**
+- [ ] `rules/error-handling.md` — AppError, no bare `except`, `details` key for validation errors
+- [ ] `rules/database.md` — SQLAlchemy ORM only, `expire_on_commit=False`, `session.begin()`
+- [ ] `rules/security.md` — Pydantic on all inputs, auth dependency on protected routes
+- [ ] `rules/testing.md` — async generator DI override, normal constructor in fixtures
+
+**Frontend (Vue 3 / TypeScript):**
+- [ ] `rules/vue-patterns.md` — `<script setup>`, store at top of setup, `onUnmounted` cleanup
+- [ ] `rules/security.md` — no raw `v-html`, no secrets committed
+- [ ] `rules/testing.md` — `emitted()` for events, `setActivePinia` in store tests
+
+### Step 5: Produce Output
+
+---
 
 ## Output Format
-Provide feedback as:
-- 🔴 **Critical** — Must fix before merge
-- 🟡 **Warning** — Should fix, potential issue
-- 🟢 **Suggestion** — Nice to have improvement
-- ✅ **Good** — Highlight what's done well
+
+```
+## Review Summary
+
+**Overall**: APPROVE | REQUEST CHANGES | NEEDS DISCUSSION
+
+### Critical (merge blocker)
+path:line: CRITICAL: <problem>. <fix>.
+
+### High (should fix before merge)
+path:line: HIGH: <problem>. <fix>.
+
+### Medium (consider fixing)
+path:line: MEDIUM: <problem>. <fix>.
+
+### Low (minor / optional)
+path:line: LOW: <problem>. <fix>.
+```
+
+One finding per line. File path + line on every finding. Fix suggestion on every finding. No praise.
+
+---
+
+## Automatic REQUEST CHANGES
+
+Any of these = block merge immediately:
+
+- Raw SQL string concatenation with user input
+- Hardcoded secret, token, or password in source code
+- Missing auth dependency on a protected route
+- Bare `except:` or `except Exception: pass` silencing errors
+- `v-html` with unsanitized user-controlled content
+- Test that contains no assertions
+- `any` type used without an explanatory comment
+
+---
+
+## Next Step
+
+After review passes, run `/deploy` to ship.

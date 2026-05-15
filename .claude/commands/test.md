@@ -98,7 +98,11 @@ Run the test — confirm it **passes** (proving the fix works).
 ### Step 5: Run Full Suite
 
 ```bash
-npm test  # Ensure no regressions
+# Backend
+pytest --cov=. --cov-fail-under=80
+
+# Frontend
+npm run test:run
 ```
 
 ---

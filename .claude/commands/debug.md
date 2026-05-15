@@ -119,13 +119,12 @@ it('should not return duplicate items (regression #123)', async () => {
 ### Step 6: Verify End-to-End
 
 ```bash
-# Run the specific test
-npm test -- --grep "regression"
+# Backend
+pytest -k "regression" -v
+pytest --cov=. --cov-fail-under=80
 
-# Run full test suite
-npm test
-
-# Run build
+# Frontend
+npx vitest run --reporter=verbose
 npm run build
 
 # Manual verification if needed
@@ -195,14 +194,27 @@ console.log('[DEBUG] After transform:', result);
 git diff | grep console.log
 ```
 
-### Node Inspector
+### Python Debugging
 
 ```bash
-# Debug Node.js
-node --inspect-brk src/index.js
+# Run with verbose output
+pytest -k "test_name" -v -s
 
+# Drop into debugger on failure
+pytest --pdb
+
+# Python debugger inline
+import pdb; pdb.set_trace()  # or: breakpoint()
+```
+
+### Node / Frontend Debugging
+
+```bash
 # Debug tests
 node --inspect-brk node_modules/.bin/vitest
+
+# Debug Vite build
+npx vite build --debug
 ```
 
 ### Git Bisect

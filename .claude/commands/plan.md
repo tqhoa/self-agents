@@ -52,9 +52,9 @@ Each task must include:
 **Objective**: [What this achieves]
 
 **Files to modify**:
-- `src/models/task.ts`
-- `src/routes/tasks.ts`
-- `src/components/TaskList.tsx`
+- `domain/repositories/task_repository.py`
+- `api/v1/tasks.py`
+- `features/tasks/components/TaskList.vue`
 
 **Acceptance Criteria**:
 - [ ] User can [action]

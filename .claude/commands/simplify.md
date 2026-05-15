@@ -99,11 +99,11 @@ function processOrder(order) {
 ### Step 5: Validate
 
 ```bash
-# All tests pass
-npm test
+# Backend
+pytest --cov=. --cov-fail-under=80
 
-# Build succeeds
-npm run build
+# Frontend
+npm run test:run && npm run build
 
 # Behavior unchanged (manual check if needed)
 ```

@@ -74,13 +74,14 @@ Run tests — confirm they **still pass**.
 
 ```bash
 # Run full test suite
-npm test
+# Backend
+pytest --cov=. --cov-fail-under=80
 
-# Run build
-npm run build
+# Frontend
+npm run test:run && npm run build
 
-# Commit with clear message
-git add .
+# Commit with specific files — never git add .
+git add path/to/changed/file.py path/to/test_file.py
 git commit -m "feat(tasks): add createTask function"
 ```
 
@@ -98,7 +99,6 @@ Update `tasks/todo.md`:
 | **100-line limit** | Test before writing more than ~100 lines |
 | **Touch only what's needed** | Don't refactor adjacent code |
 | **Keep it building** | Project must compile after each increment |
-| **Feature flags** | Use flags for incomplete features that need merging |
 | **Rollback-friendly** | Each increment should be independently revertable |
 
 ### When Stuck
