@@ -70,19 +70,20 @@ All rules in `.claude/rules/` are **mandatory** and must be followed:
 
 ### Architecture & Design
 
-| Rule                   | Description                                                             |
-| ---------------------- | ----------------------------------------------------------------------- |
-| `tech-stack.md`        | Approved technologies (Python, FastAPI, VueJs, Postgres, Redis, Prisma) |
-| `system-design.md`     | CAP theorem, caching, scaling, queues                                   |
-| `project-structure.md` | Layered architecture, folder organization                               |
-| `api-conventions.md`   | REST standards, response envelopes                                      |
+| Rule                   | Description                                                              |
+| ---------------------- | ------------------------------------------------------------------------ |
+| `tech-stack.md`        | Technology selection guide — frameworks, libraries, decision criteria     |
+| `system-design.md`     | CAP theorem, caching, scaling, queues                                    |
+| `project-structure.md` | Layered architecture, folder organization (JS + Python)                  |
+| `api-conventions.md`   | REST standards, response envelopes                                       |
+| `vue-patterns.md`      | Vue 3 component, composable, Pinia, TanStack Query, form, router patterns |
 
 ### Data & Naming
 
-| Rule                    | Description                                   |
-| ----------------------- | --------------------------------------------- |
-| `naming-conventions.md` | Cache keys, DB, queues, env vars              |
-| `database.md`           | Prisma patterns, transactions, N+1 prevention |
+| Rule                    | Description                                              |
+| ----------------------- | -------------------------------------------------------- |
+| `naming-conventions.md` | Cache keys, DB, queues, env vars                         |
+| `database.md`           | SQLAlchemy async + Prisma patterns, transactions, N+1    |
 
 ### Operations
 
