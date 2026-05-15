@@ -155,7 +155,7 @@ Quick references in `.claude/references/`:
 
 ## Agent Behavior Guidelines
 
-1. **Follow the workflow** — Use `/spec` → `/plan` → `/build` → `/review`
+1. **Follow the workflow** — Use `/spec` → `/plan` → `/build` → `/test` → `/review`
 2. **Apply mandatory rules** — All rules in `.claude/rules/` are non-negotiable
 3. **Test first** — Write failing tests before implementing
 4. **Incremental changes** — Small commits, always buildable
