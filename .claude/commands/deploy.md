@@ -36,7 +36,7 @@ npm run test:run
 ruff check . && mypy .
 
 # Frontend — no type errors
-npm run type-check
+tsc --noEmit
 
 # Check for secrets that shouldn't be committed
 git diff --staged | grep -iE "(password|secret|token|api_key)" || echo "clean"
@@ -87,7 +87,7 @@ docker push registry/myapp:$(git rev-parse --short HEAD)
 
 ```bash
 # Vercel (auto-deploys from git push)
-git push origin main
+git push origin master
 
 # Manual Vercel deploy
 vercel --prod
