@@ -101,7 +101,7 @@ If you can't write a test, document why. Then fix.
 ruff check . && mypy .   # verify no new errors
 
 # Frontend
-npm run type-check        # verify no new type errors
+tsc --noEmit              # verify no new type errors
 ```
 
 Follow:
@@ -118,9 +118,12 @@ pytest -k "test_regression_issue_123" -v
 
 # Run full test suite — no regressions introduced
 pytest --cov=. --cov-fail-under=80
+mypy .
+alembic upgrade head   # only if fix involved a migration
 
 # Frontend
 npm run test:run
+tsc --noEmit
 ```
 
 ### Step 7: Commit
