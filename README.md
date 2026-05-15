@@ -1,8 +1,4 @@
-# AI Agent Project — Configuration
-
-<div align="center">
-    <sub>Inspired by <a href="https://github.com/addyosmani/agent-skills">addyosmani/agent-skills</a></sub>
-</div>
+# Developer Guide for AI Agents
 
 ---
 
@@ -11,9 +7,9 @@
 This repository provides a **production-grade configuration** for Claude Code AI agents. It includes:
 
 - **Structured development workflow** (Spec → Plan → Build → Test → Review → Ship)
-- **10 specialized agents** for different development roles
-- **13 mandatory rules** covering code quality, architecture, and operations
-- **8 slash commands** for common workflows
+- **9 specialized agents** for different development roles
+- **14 mandatory rules** covering code quality, architecture, and operations
+- **9 slash commands** for common workflows
 - **4 reference checklists** for security, testing, performance, and accessibility
 
 ---
