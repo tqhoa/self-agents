@@ -10,5 +10,20 @@
   "rules_dir": ".claude/rules",
   "commands_dir": ".claude/commands",
   "skills_dir": ".claude/skills",
-  "agents_dir": ".claude/agents"
+  "agents_dir": ".claude/agents",
+  "enabledPlugins": {
+    "caveman@caveman": true
+  },
+  "extraKnownMarketplaces": {
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"/home/local/.claude/plugins/cache/caveman/caveman/63a91ecadbf4/src/hooks/caveman-statusline.sh\""
+  }
 }
