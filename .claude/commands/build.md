@@ -13,8 +13,8 @@ Implement tasks one at a time using Test-Driven Development. Each increment leav
 
 ## Prerequisites
 
-- A plan exists (`tasks/todo.md`)
-- Understanding of task acceptance criteria
+- Plan exists at `docs/plans/[feature-name].md`
+- Task acceptance criteria are understood
 
 ## Workflow
 
@@ -23,23 +23,32 @@ Implement tasks one at a time using Test-Driven Development. Each increment leav
 #### Step 1: Load Context
 
 ```
-1. Read the task's acceptance criteria
+1. Read the task's acceptance criteria and layer (Backend / Frontend / Full-stack)
 2. Identify relevant existing code and patterns
-3. Understand types and interfaces involved
+3. Understand schemas, types, and integration points involved
 ```
 
 #### Step 2: RED — Write Failing Test
 
-```javascript
-// Write a test that describes expected behavior
-// This test MUST fail initially
+**Python (pytest):**
+```python
+# tests/unit/services/test_task_service.py
+@pytest.mark.asyncio
+async def test_create_task_returns_id_and_title(mock_repo):
+    mock_repo.create.return_value = TaskModel(id="1", title="Test")
+    result = await task_service.create(CreateTaskRequest(title="Test"))
+    assert result.id == "1"
+    assert result.title == "Test"
+```
 
-describe('createTask', () => {
-  it('should create a task with title and return id', async () => {
-    const result = await createTask({ title: 'Test' });
-    expect(result.id).toBeDefined();
-    expect(result.title).toBe('Test');
-  });
+**JavaScript (Vitest):**
+```javascript
+// tests/unit/services/task-service.test.js
+it('should create task with title and return id', async () => {
+  mockRepo.create.mockResolvedValue({ id: '1', title: 'Test' });
+  const result = await createTask({ title: 'Test' });
+  expect(result.id).toBe('1');
+  expect(result.title).toBe('Test');
 });
 ```
 
@@ -47,10 +56,17 @@ Run test — confirm it **fails**.
 
 #### Step 3: GREEN — Minimal Implementation
 
-```javascript
-// Write the MINIMUM code to pass the test
-// No extra features, no premature optimization
+**Python (FastAPI service):**
+```python
+# domain/services/task_service.py
+async def create(self, data: CreateTaskRequest) -> TaskResponse:
+    task = await self.repo.create(title=data.title)
+    return TaskResponse.model_validate(task)
+```
 
+**JavaScript:**
+```javascript
+// src/services/task-service.js
 async function createTask({ title }) {
   const task = await db.task.create({ data: { title } });
   return task;
@@ -61,11 +77,12 @@ Run test — confirm it **passes**.
 
 #### Step 4: REFACTOR — Improve Code Quality
 
-```javascript
-// Clean up while keeping tests green
-// - Improve naming
-// - Extract helpers if needed
-// - Remove duplication
+```
+- Improve naming and clarity
+- Extract helpers if logic is duplicated
+- Remove dead code
+- Add type hints (Python) / strict types (TypeScript)
+- Run mypy / tsc --noEmit to catch type errors
 ```
 
 Run tests — confirm they **still pass**.
@@ -73,42 +90,44 @@ Run tests — confirm they **still pass**.
 #### Step 5: Verify & Commit
 
 ```bash
-# Run full test suite
 # Backend
 pytest --cov=. --cov-fail-under=80
+mypy .                          # strict type check
+alembic upgrade head            # if migrations were added
 
 # Frontend
-npm run test:run && npm run build
+npm run test:run
+npm run build                   # confirm no build errors
+tsc --noEmit                    # type check
 
-# Commit with specific files — never git add .
-git add path/to/changed/file.py path/to/test_file.py
-git commit -m "feat(tasks): add createTask function"
+# Commit specific files — never git add .
+git add domain/services/task_service.py tests/unit/services/test_task_service.py
+git commit -m "feat(tasks): add create task service"
 ```
 
 #### Step 6: Mark Complete
 
-Update `tasks/todo.md`:
+Update `docs/plans/[feature-name].md`:
 ```markdown
-- [x] Task 1.1: Create task endpoint
+- [x] Task 1.1: Create task service
 ```
 
 ### Rules
 
 | Rule | Why |
 |------|-----|
-| **100-line limit** | Test before writing more than ~100 lines |
+| **~100-line limit** | Test before writing more than ~100 lines |
 | **Touch only what's needed** | Don't refactor adjacent code |
-| **Keep it building** | Project must compile after each increment |
-| **Rollback-friendly** | Each increment should be independently revertable |
+| **Keep it building** | System must compile and tests pass after each increment |
+| **Rollback-friendly** | Each commit must be independently revertable |
+| **No feature flags** | Ship complete slices or keep behind server-side config |
 
 ### When Stuck
 
-If a step fails:
-
 1. **Stop** — Don't push through broken code
 2. **Diagnose** — Use `/debug` to find root cause
-3. **Fix** — Address the actual problem
-4. **Guard** — Add test to prevent recurrence
+3. **Fix** — Address the actual problem, not the symptom
+4. **Guard** — Add regression test to prevent recurrence
 5. **Resume** — Continue from where you stopped
 
 ## Red Flags
@@ -120,13 +139,14 @@ Stop and reassess if you find yourself:
 - Expanding scope mid-task
 - Breaking the build between increments
 - Creating abstractions "for later"
+- Adding fallbacks or error handling for scenarios that can't happen
 
 ## Output
 
 - Working, tested code
-- Updated `tasks/todo.md` with completed items
+- Updated `docs/plans/[feature-name].md` with completed items
 - Clean git history with atomic commits
 
 ## Next Step
 
-After all tasks complete, run `/review` for final quality check.
+After all tasks complete → run `/test` to verify coverage, then `/review` for final quality check.
