@@ -86,6 +86,7 @@ This repository provides a **production-grade configuration** for Claude Code AI
 │   ├── security.md              # Security requirements
 │   ├── monitoring.md            # Observability
 │   ├── testing.md               # Test standards
+│   ├── vue-patterns.md          # Vue 3 Patterns
 │   └── git-workflow.md          # Git conventions
 │
 ├── skills/                      # Advanced skills
