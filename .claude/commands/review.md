@@ -22,8 +22,8 @@ Conduct a five-axis code review of specified files, a PR diff, or recent changes
 
 ```bash
 # Review what changed
-git diff main...HEAD
-git log --oneline main...HEAD
+git diff master...HEAD
+git log --oneline master...HEAD
 ```
 
 - What is this change trying to do?
@@ -58,7 +58,21 @@ Full checklist: `.claude/agents/code-reviewer.md` and `.claude/skills/code-revie
 - [ ] `rules/security.md` — no raw `v-html`, no secrets committed
 - [ ] `rules/testing.md` — `emitted()` for events, `setActivePinia` in store tests
 
-### Step 5: Produce Output
+### Step 5: Run Verification Commands
+
+```bash
+# Backend
+pytest --cov=. --cov-fail-under=80    # coverage gate
+mypy .                                 # type errors
+
+# Frontend
+tsc --noEmit                           # type errors
+npm run test:run                       # full suite
+```
+
+Fail on any command = REQUEST CHANGES before reviewing further.
+
+### Step 6: Produce Output
 
 ---
 
@@ -90,13 +104,17 @@ One finding per line. File path + line on every finding. Fix suggestion on every
 
 Any of these = block merge immediately:
 
-- Raw SQL string concatenation with user input
+- Raw SQL string concatenation with user input (use ORM or parameterized `text()`)
 - Hardcoded secret, token, or password in source code
-- Missing auth dependency on a protected route
+- Missing auth dependency on a protected FastAPI route
 - Bare `except:` or `except Exception: pass` silencing errors
 - `v-html` with unsanitized user-controlled content
 - Test that contains no assertions
-- `any` type used without an explanatory comment
+- `any` / `Any` type used without an explanatory comment
+- N+1 query in a loop without `selectinload` / Prisma `include`
+- DB schema change with no Alembic migration file
+- Coverage drops below 80% (`--cov-fail-under=80` gate fails)
+- `mypy` / `tsc --noEmit` errors introduced by the change
 
 ---
 
