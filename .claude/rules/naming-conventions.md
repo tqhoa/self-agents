@@ -210,12 +210,12 @@ GRAFANA_API_KEY=...
 
 ## 📁 File & Folder Naming
 
+### JavaScript / TypeScript
 ```
 # Files: kebab-case
-user-service.js
-auth-middleware.js
-order-repository.js
-send-welcome-email.js  # specific action scripts
+user-service.ts
+auth-middleware.ts
+order-repository.ts
 
 # Folders: kebab-case, plural for collections
 controllers/
@@ -226,9 +226,29 @@ middleware/
 config/
 
 # Test files: match source file + .test
-user-service.test.js
-auth-middleware.test.js
+user-service.test.ts
+auth-middleware.test.ts
+```
 
+### Python
+```
+# Files: snake_case
+user_service.py
+auth_middleware.py
+order_repository.py
+
+# Folders: snake_case (NO hyphens in Python packages)
+domain/services/
+infrastructure/cache/
+api/v1/
+
+# Test files: test_ prefix
+test_user_service.py
+test_auth_middleware.py
+```
+
+### Shared
+```
 # Config files
 .env.development
 .env.production
@@ -243,18 +263,18 @@ docker-compose.prod.yml
 ```
 # REST: plural nouns, kebab-case, versioned
 GET    /api/v1/users
-GET    /api/v1/users/:id
-POST   /api/v1/users
-PATCH  /api/v1/users/:id
-DELETE /api/v1/users/:id
+GET    /api/v1/users/{id}        # FastAPI syntax: {id}
+POST   /api/v1/users             # Express syntax: :id
+PATCH  /api/v1/users/{id}
+DELETE /api/v1/users/{id}
 
 # Nested resources
-GET    /api/v1/users/:id/orders
-POST   /api/v1/users/:id/orders
+GET    /api/v1/users/{id}/orders
+POST   /api/v1/users/{id}/orders
 
 # Actions that don't fit CRUD (use verbs sparingly)
 POST   /api/v1/auth/login
 POST   /api/v1/auth/logout
 POST   /api/v1/auth/refresh
-POST   /api/v1/payments/:id/refund
+POST   /api/v1/payments/{id}/refund
 ```

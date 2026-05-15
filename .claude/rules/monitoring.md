@@ -4,11 +4,11 @@
 
 ## 🔭 The Three Pillars of Observability
 
-| Pillar | Tool | Purpose |
-|--------|------|---------|
-| **Logs** | Winston / Pino + Loki | What happened |
-| **Metrics** | Prometheus + Grafana | How the system is behaving |
-| **Traces** | OpenTelemetry + Jaeger | Why something is slow |
+| Pillar | JS/TS Tool | Python Tool | Purpose |
+|--------|-----------|-------------|---------|
+| **Logs** | Pino + Loki | structlog + Loki | What happened |
+| **Metrics** | prom-client + Grafana | prometheus-client + Grafana | How the system is behaving |
+| **Traces** | OpenTelemetry + Jaeger | OpenTelemetry + Jaeger | Why something is slow |
 
 ---
 
@@ -24,6 +24,8 @@
 | `trace` | Very verbose (never in production) |
 
 ### Log Format — Structured JSON (always!)
+
+**JavaScript:**
 ```js
 // ✅ Structured log — searchable and parseable
 logger.info({
@@ -39,32 +41,49 @@ logger.info({
 console.log(`Order ${orderId} placed by user ${userId}`);
 ```
 
+**Python:**
+```python
+# ✅ structlog — structured, bound context
+import structlog
+
+logger = structlog.get_logger()
+
+logger.info(
+    "order.placed",
+    order_id=order.id,
+    user_id=user.id,
+    amount=float(order.total),
+    duration_ms=int((time.monotonic() - start) * 1000),
+    request_id=request_id,
+)
+
+# ❌ Unstructured
+print(f"Order {order_id} placed by user {user_id}")
+```
+
 ### Mandatory Fields
-```js
+```json
 {
-  level: 'info',
-  timestamp: '2026-01-01T00:00:00.000Z',
-  service: 'order-service',
-  version: '1.2.3',
-  environment: 'production',
-  requestId: 'uuid',          // trace across services
-  userId: 'uuid',             // who triggered it
-  event: 'order.placed',      // what happened
-  durationMs: 45,             // how long
-  // ... domain-specific fields
+  "level": "info",
+  "timestamp": "2026-01-01T00:00:00.000Z",
+  "service": "order-service",
+  "version": "1.2.3",
+  "environment": "production",
+  "request_id": "uuid",
+  "user_id": "uuid",
+  "event": "order.placed",
+  "duration_ms": 45
 }
 ```
 
 ### What NOT to Log
-```js
-// ❌ Never log sensitive data
-logger.info({ password: user.password });     // NEVER
-logger.info({ token: req.headers.authorization }); // NEVER
-logger.info({ creditCard: payment.card });    // NEVER
-logger.info({ ssn: user.socialSecurityNumber }); // NEVER
+```
+❌ Never log: passwords, tokens, credit card numbers, SSNs, PII
 ```
 
-### Logger Setup (Pino)
+### Logger Setup
+
+**JavaScript (Pino):**
 ```js
 // src/utils/logger.js
 import pino from 'pino';
@@ -78,6 +97,60 @@ export const logger = pino({
   },
   timestamp: pino.stdTimeFunctions.isoTime,
 });
+```
+
+**Python (structlog):**
+```python
+# shared/utils/logger.py
+import logging
+import structlog
+from shared.config import settings
+
+structlog.configure(
+    processors=[
+        structlog.contextvars.merge_contextvars,
+        structlog.processors.add_log_level,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.JSONRenderer(),
+    ],
+    wrapper_class=structlog.BoundLogger,
+    logger_factory=structlog.PrintLoggerFactory(),
+)
+
+logger = structlog.get_logger().bind(
+    service=settings.app_name,
+    environment=settings.environment,
+)
+```
+
+**FastAPI request logging middleware:**
+```python
+# api/middleware/logging.py
+import time
+import uuid
+import structlog
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+
+logger = structlog.get_logger()
+
+class RequestLoggingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        request_id = str(uuid.uuid4())
+        structlog.contextvars.bind_contextvars(request_id=request_id)
+        start = time.monotonic()
+
+        response = await call_next(request)
+
+        logger.info(
+            "http.request",
+            method=request.method,
+            path=request.url.path,
+            status_code=response.status_code,
+            duration_ms=int((time.monotonic() - start) * 1000),
+        )
+        structlog.contextvars.clear_contextvars()
+        return response
 ```
 
 ---
@@ -108,21 +181,16 @@ queue_processing_duration_seconds     # histogram
 payment_transactions_total            # counter (+ status label)
 ```
 
-### Labels (Dimensions)
-```js
-// ✅ Use labels for meaningful dimensions
-httpRequestCounter.labels({
-  method: req.method,        // GET, POST, etc.
-  route: '/api/v1/users',    // normalized route
-  status_code: res.statusCode,
-  service: 'user-service',
-}).inc();
+### Labels — Don't Use High-Cardinality Values
 
-// ❌ Don't use high-cardinality labels (userId, orderId)
-// This creates millions of time series → kills Prometheus
+```
+✅ Good labels: method, route, status_code, service
+❌ Bad labels: user_id, order_id, session_id  (millions of time series → kills Prometheus)
 ```
 
-### Express Middleware for Metrics
+### Metrics Setup
+
+**JavaScript (prom-client + Express):**
 ```js
 // middleware/metrics.js
 import client from 'prom-client';
@@ -142,11 +210,55 @@ export function metricsMiddleware(req, res, next) {
   next();
 }
 
-// Expose metrics endpoint
 app.get('/metrics', async (req, res) => {
   res.set('Content-Type', client.register.contentType);
   res.end(await client.register.metrics());
 });
+```
+
+**Python (prometheus-client + FastAPI):**
+```python
+# shared/metrics.py
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+import time
+
+REQUEST_COUNT = Counter(
+    'http_requests_total',
+    'Total HTTP requests',
+    ['method', 'route', 'status_code'],
+)
+REQUEST_DURATION = Histogram(
+    'http_request_duration_seconds',
+    'HTTP request duration',
+    ['method', 'route'],
+    buckets=[0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
+)
+
+# api/middleware/metrics.py
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class MetricsMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        start = time.monotonic()
+        response = await call_next(request)
+        duration = time.monotonic() - start
+
+        route = request.scope.get("route")
+        path = route.path if route else request.url.path
+
+        REQUEST_COUNT.labels(
+            method=request.method,
+            route=path,
+            status_code=response.status_code,
+        ).inc()
+        REQUEST_DURATION.labels(method=request.method, route=path).observe(duration)
+        return response
+
+# Expose metrics endpoint
+@app.get("/metrics", include_in_schema=False)
+async def metrics():
+    from fastapi.responses import Response
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 ```
 
 ---
@@ -226,57 +338,49 @@ Row 5: Logs panel (Loki integration)
 groups:
   - name: service-alerts
     rules:
-      # Service is down
       - alert: ServiceDown
         expr: up{job="my-service"} == 0
         for: 1m
-        severity: critical
+        labels:
+          severity: critical
         annotations:
           summary: "Service {{ $labels.job }} is down"
 
-      # High error rate
       - alert: HighErrorRate
         expr: |
           rate(http_requests_total{status_code=~"5.."}[5m])
           / rate(http_requests_total[5m]) > 0.05
         for: 5m
-        severity: warning
+        labels:
+          severity: warning
         annotations:
           summary: "Error rate > 5% on {{ $labels.service }}"
 
-      # High P99 latency
       - alert: HighLatency
         expr: |
           histogram_quantile(0.99,
             rate(http_request_duration_seconds_bucket[5m])
           ) > 1
         for: 5m
-        severity: warning
+        labels:
+          severity: warning
         annotations:
           summary: "P99 latency > 1s on {{ $labels.service }}"
 
-      # Low cache hit rate
       - alert: LowCacheHitRate
         expr: |
           rate(cache_hits_total[5m])
           / (rate(cache_hits_total[5m]) + rate(cache_misses_total[5m])) < 0.7
         for: 10m
-        severity: warning
-```
-
-### Alert Naming Convention
-```
-{Severity}{Service}{Problem}
-CriticalPaymentServiceDown
-WarningOrderServiceHighLatency
-WarningRedisLowHitRate
-CriticalDatabaseConnectionsExhausted
+        labels:
+          severity: warning
 ```
 
 ---
 
 ## 🔍 Distributed Tracing (OpenTelemetry)
 
+**JavaScript:**
 ```js
 // src/tracing.js
 import { NodeSDK } from '@opentelemetry/sdk-node';
@@ -292,10 +396,31 @@ const sdk = new NodeSDK({
 sdk.start();
 ```
 
+**Python:**
+```python
+# shared/tracing.py
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
+from shared.config import settings
+
+def setup_tracing(app) -> None:
+    provider = TracerProvider()
+    provider.add_span_processor(
+        BatchSpanProcessor(JaegerExporter(agent_host_name=settings.jaeger_host))
+    )
+    trace.set_tracer_provider(provider)
+    FastAPIInstrumentor.instrument_app(app)
+    SQLAlchemyInstrumentor().instrument()
+```
+
 ### Span Naming
 ```
 # HTTP: {method} {route}
-GET /api/v1/users/:id
+GET /api/v1/users/{id}
 
 # DB: {operation} {table}
 SELECT users

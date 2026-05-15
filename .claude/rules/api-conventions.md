@@ -75,5 +75,6 @@ GET /api/products?category=electronics&minPrice=100
 ```
 
 ### Documentation
-- Every endpoint MUST have JSDoc/Swagger annotations
-- Include request body schema, response schema, and error codes
+- **FastAPI**: OpenAPI docs auto-generated from Pydantic schemas and type hints — available at `/docs` (Swagger UI) and `/redoc`. No manual annotations needed.
+- **Express/Node**: Every endpoint must have Swagger/OpenAPI annotations — use `zod-to-openapi` or JSDoc. Mount at `/api-docs`. Keep `openapi.yaml` committed.
+- Include request body schema, response schema, and error codes in both cases.

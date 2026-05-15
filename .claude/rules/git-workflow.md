@@ -60,7 +60,7 @@ chore: upgrade express to v5.0.0
 - PRs must reference an issue: `Closes #123`
 - Minimum 1 reviewer approval required
 - All CI checks must pass
-- No direct commits to `main` or `develop`
+- No direct commits to `master` or `develop`
 - PR title must follow conventional commit format
 
 ## Commit Best Practices

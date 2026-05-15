@@ -86,15 +86,31 @@ CREATE INDEX idx_users_email ON users(email);
 ```
 
 ### N+1 Query Prevention
+
+**Python (SQLAlchemy):**
+```python
+# ❌ N+1: one query per user
+users = (await db.execute(select(UserModel))).scalars().all()
+for user in users:
+    orders = (await db.execute(select(OrderModel).where(OrderModel.user_id == user.id))).scalars().all()
+
+# ✅ Eager load with selectinload
+from sqlalchemy.orm import selectinload
+users = (await db.execute(
+    select(UserModel).options(selectinload(UserModel.orders))
+)).scalars().all()
+```
+
+**JavaScript (Prisma):**
 ```js
 // ❌ N+1: one query per user
-const users = await db.users.findAll();
+const users = await db.user.findMany();
 for (const user of users) {
-  user.orders = await db.orders.findAll({ where: { userId: user.id } });
+  user.orders = await db.order.findMany({ where: { userId: user.id } });
 }
 
-// ✅ Single query with JOIN or include
-const users = await db.users.findAll({ include: [{ model: db.orders }] });
+// ✅ Single query with include
+const users = await db.user.findMany({ include: { orders: true } });
 ```
 
 ---
