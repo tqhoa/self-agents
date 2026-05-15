@@ -24,6 +24,7 @@ TDD transforms testing from an afterthought into the foundation of development. 
 
 Write a test that describes expected behavior. **It must fail.**
 
+**JavaScript (Vitest):**
 ```javascript
 describe('calculateDiscount', () => {
   it('should apply 10% discount for orders over $100', () => {
@@ -33,12 +34,24 @@ describe('calculateDiscount', () => {
 });
 ```
 
-Run: `npm test` → Should **FAIL**
+Run: `npm run test:run` → Should **FAIL**
+
+**Python (pytest):**
+```python
+def test_calculate_discount_applies_10_percent_for_orders_over_100():
+    result = calculate_discount(150)
+    assert result == 15
+```
+
+Run: `pytest -k "test_calculate_discount"` → Should **FAIL**
+
+---
 
 ### GREEN Phase
 
 Write **minimal** code to pass the test. No extras.
 
+**JavaScript:**
 ```javascript
 function calculateDiscount(amount) {
   if (amount > 100) return amount * 0.1;
@@ -46,12 +59,25 @@ function calculateDiscount(amount) {
 }
 ```
 
-Run: `npm test` → Should **PASS**
+Run: `npm run test:run` → Should **PASS**
+
+**Python:**
+```python
+def calculate_discount(amount: float) -> float:
+    if amount > 100:
+        return amount * 0.1
+    return 0
+```
+
+Run: `pytest -k "test_calculate_discount"` → Should **PASS**
+
+---
 
 ### REFACTOR Phase
 
 Improve code while keeping tests green.
 
+**JavaScript:**
 ```javascript
 const DISCOUNT_THRESHOLD = 100;
 const DISCOUNT_RATE = 0.1;
@@ -62,7 +88,18 @@ function calculateDiscount(amount) {
 }
 ```
 
-Run: `npm test` → Should still **PASS**
+**Python:**
+```python
+DISCOUNT_THRESHOLD = 100
+DISCOUNT_RATE = 0.1
+
+def calculate_discount(amount: float) -> float:
+    if amount <= DISCOUNT_THRESHOLD:
+        return 0
+    return amount * DISCOUNT_RATE
+```
+
+Run full suite → Should still **PASS**
 
 ---
 
@@ -70,6 +107,7 @@ Run: `npm test` → Should still **PASS**
 
 ### Step 1: Write Failing Test
 
+**JavaScript:**
 ```javascript
 it('should handle empty cart without error (bug #456)', () => {
   const cart = new Cart([]);
@@ -78,27 +116,32 @@ it('should handle empty cart without error (bug #456)', () => {
 });
 ```
 
+**Python:**
+```python
+def test_get_total_returns_zero_for_empty_cart():
+    # Regression: bug #456 — empty cart raised ZeroDivisionError
+    cart = Cart(items=[])
+    assert cart.get_total() == 0
+```
+
 ### Step 2: Verify Failure
 
-Run test → Confirms bug exists
+Run test → Confirms bug exists.
 
 ### Step 3: Fix Bug
 
-```javascript
-getTotal() {
-  if (this.items.length === 0) return 0;  // Fix
-  return this.items.reduce((sum, item) => sum + item.price, 0);
-}
-```
-
 ### Step 4: Verify Pass
 
-Run test → Confirms fix works
+Run test → Confirms fix works.
 
 ### Step 5: Run Full Suite
 
 ```bash
-npm test  # No regressions
+# Backend
+pytest --cov=. --cov-fail-under=80
+
+# Frontend
+npm run test:run
 ```
 
 ---
@@ -122,17 +165,31 @@ npm test  # No regressions
 
 ## Test Structure: AAA Pattern
 
+**JavaScript:**
 ```javascript
 it('should calculate tax for California', () => {
-  // Arrange — Setup
+  // Arrange
   const order = createOrder({ state: 'CA', subtotal: 100 });
-  
-  // Act — Execute
+
+  // Act
   const tax = calculateTax(order);
-  
-  // Assert — Verify
+
+  // Assert
   expect(tax).toBe(7.25);
 });
+```
+
+**Python:**
+```python
+def test_calculate_tax_for_california():
+    # Arrange
+    order = create_order(state="CA", subtotal=100)
+
+    # Act
+    tax = calculate_tax(order)
+
+    # Assert
+    assert tax == 7.25
 ```
 
 ---
@@ -145,7 +202,6 @@ Tests should be **Descriptive And Meaningful Phrases**.
 // ✅ DAMP — Self-contained and clear
 it('should reject password without uppercase letter', () => {
   const result = validatePassword('lowercase123!');
-  
   expect(result.valid).toBe(false);
   expect(result.errors).toContain('Must contain uppercase letter');
 });
@@ -165,31 +221,20 @@ it('should reject invalid password', () => {
 3. **Stubs** — Return canned responses
 4. **Mocks** — Verify interactions (use sparingly)
 
-```javascript
-// ✅ Prefer: Real or fake
-const db = createTestDatabase();
-const user = await userService.create(db, userData);
-
-// ⚠️ Use sparingly: Mocks
-const mockDb = { create: vi.fn().mockResolvedValue(user) };
-```
-
 ---
 
 ## Naming Conventions
 
-```javascript
-// Pattern: should [expected behavior] when [condition]
+**JavaScript:** `should [expected behavior] when [condition]`
+**Python:** `test_[behavior]_when_[condition]`
 
-// ✅ Good
-'should return empty array when no users exist'
-'should throw ValidationError when email is invalid'
-'should send welcome email after registration'
+```
+✅ should return empty array when no users exist
+✅ test_find_by_id_raises_when_user_not_found
 
-// ❌ Bad
-'works correctly'
-'test user creation'
-'handles error'
+❌ works correctly
+❌ test_user_creation
+❌ handles error
 ```
 
 ---
@@ -202,7 +247,7 @@ const mockDb = { create: vi.fn().mockResolvedValue(user) };
 | Flaky tests | Erodes trust | Use deterministic data |
 | Over-mocking | False confidence | Prefer real implementations |
 | Snapshot abuse | Large diffs ignored | Use sparingly |
-| Shared mutable state | Tests affect each other | Reset in beforeEach |
+| Shared mutable state | Tests affect each other | Reset in `beforeEach` / `autouse` fixture |
 | Testing frameworks | Wasted effort | Only test your code |
 
 ---
@@ -213,5 +258,5 @@ const mockDb = { create: vi.fn().mockResolvedValue(user) };
 - [ ] Bug fixes have reproduction tests
 - [ ] Tests describe behavior (readable names)
 - [ ] No skipped tests
-- [ ] Coverage maintained/improved
+- [ ] Coverage ≥ 80%
 - [ ] Full suite passes

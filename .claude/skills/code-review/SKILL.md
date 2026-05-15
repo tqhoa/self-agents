@@ -69,13 +69,14 @@ Progress over perfection. Continuous incremental improvement.
 ### Axis 4: Security
 
 **Input validation:**
-- Is user input validated and sanitized?
-- Are queries parameterized?
+- Is user input validated with Pydantic / Zod schemas?
+- Are ORM queries used (no raw SQL string concatenation)?
+- Is `v-html` avoided or sanitized?
 - Is output properly encoded?
 
 **Authentication & Authorization:**
-- Are auth checks in place?
-- Is ownership verified for resources?
+- Are auth checks in place on every protected route?
+- Is resource ownership verified?
 - Are permissions enforced?
 
 **Secrets management:**
@@ -88,16 +89,15 @@ Progress over perfection. Continuous incremental improvement.
 ### Axis 5: Performance
 
 **Common issues:**
-- N+1 query patterns?
-- Unbounded operations (loops, queries)?
-- Missing pagination?
-- Unnecessary re-renders (React)?
+- N+1 query patterns? (use `selectinload` / Prisma `include`)
+- Unbounded operations (loops, queries without pagination)?
+- Missing indexes for frequently queried columns?
+- Unnecessary watchers or computed re-runs (Vue)?
 - Objects created in hot paths?
-- Missing indexes for queries?
 
 **Async handling:**
 - Are async operations properly awaited?
-- Could operations be parallelized?
+- Could independent operations be parallelized with `asyncio.gather` / `Promise.all`?
 
 ---
 
@@ -113,27 +113,22 @@ Each PR should be **one logical change**, not an entire feature.
 
 ---
 
-## Comment Severity Labels
+## Severity Labels
 
-Use prefixes to clarify intent:
+| Severity | Meaning | Action |
+|----------|---------|--------|
+| `CRITICAL` | Security flaw, data loss, broken auth | Must fix before merge |
+| `HIGH` | Bug, incorrect behavior, missing error handling | Must fix before merge |
+| `MEDIUM` | Readability, architecture, test coverage | Should fix |
+| `LOW` | Style, naming, minor improvement | Author's choice |
 
-| Label | Meaning | Action Required |
-|-------|---------|-----------------|
-| (none) | Required change | Must fix before merge |
-| `Critical:` | Merge blocker | Must fix before merge |
-| `Nit:` | Minor/style | Optional, author's choice |
-| `Optional:` | Suggestion | Consider, not required |
-| `FYI:` | Informational | No action needed |
+**Output format:**
 
-**Examples:**
 ```
-Critical: This allows SQL injection via the `name` parameter.
-
-Nit: Consider renaming `data` to `userData` for clarity.
-
-Optional: You could use `Array.from()` here instead of spread.
-
-FYI: We have a shared utility for this in `src/utils/format.ts`.
+path/to/file.py:42: CRITICAL: SQL injection via string concatenation. Use ORM parameterized queries.
+api/v1/users.py:88: HIGH: Missing authorization check — any authenticated user can delete any resource.
+domain/services/order_service.py:31: MEDIUM: Function exceeds 30 lines. Extract validation into `_validate_order`.
+schemas/user.py:14: LOW: Rename `d` to `data` for clarity.
 ```
 
 ---
@@ -157,19 +152,13 @@ Tests reveal:
 
 Walk through changes with the 5 axes in mind.
 
-### Step 4: Categorize Findings
-
-- **Must fix** — Correctness, security, critical bugs
-- **Should fix** — Readability, architecture concerns
-- **Consider** — Suggestions, style preferences
-
-### Step 5: Provide Actionable Feedback
+### Step 4: Provide Actionable Feedback
 
 ```
 ❌ "This is confusing"
 
-✅ "This nested conditional is hard to follow. Consider extracting 
-    the inner logic to a named function like `isEligibleForDiscount()`"
+✅ "This nested conditional is hard to follow. Extract the inner logic
+    to a named function like `is_eligible_for_discount()`."
 ```
 
 ---
@@ -182,19 +171,21 @@ Walk through changes with the 5 axes in mind.
 ### Summary
 [1-2 sentences on overall assessment]
 
-### Critical Issues
-- **[file:line]** [Issue description]
-
-### Important
-- **[file:line]** [Issue description]
-
-### Suggestions
-- **[file:line]** [Suggestion]
+### Findings
+path/to/file:line: CRITICAL: [issue]. [fix].
+path/to/file:line: HIGH: [issue]. [fix].
+path/to/file:line: MEDIUM: [issue]. [fix].
+path/to/file:line: LOW: [suggestion].
 
 ### Verdict
-- [ ] Approve
-- [ ] Request changes
-- [ ] Needs discussion
+**REQUEST CHANGES** — [N critical/high issues must be resolved]
+```
+
+If no CRITICAL or HIGH issues:
+
+```markdown
+### Verdict
+**APPROVE** — [Optional: one sentence on what to watch]
 ```
 
 ---
@@ -203,6 +194,5 @@ Walk through changes with the 5 axes in mind.
 
 - **Don't accept "I'll clean it up later"** — It won't happen
 - **Remove dead code** — Don't comment it out
-- **Review within 1 business day** — Faster is better
 - **Be kind, not nice** — Honest feedback helps everyone
 - **One approval minimum** — Before any merge

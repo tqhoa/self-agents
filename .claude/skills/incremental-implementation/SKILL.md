@@ -103,7 +103,7 @@ Slice 3: Polish (now safe to invest time)
 ### 3. Contract-First
 
 ```
-Slice 1: Define API contract (types, endpoints)
+Slice 1: Define API contract (schemas, endpoints)
 Slice 2: Backend implements contract
 Slice 3: Frontend implements against contract
 ```
@@ -130,20 +130,9 @@ Stay focused on the current task.
 
 Never leave the codebase broken between commits.
 
-### Feature Flags for Incomplete Work
-
-```javascript
-// Use flags when merging incomplete features
-if (featureFlags.newCheckout) {
-  return <NewCheckoutFlow />;
-}
-return <LegacyCheckout />;
-```
-
 ### Safe Defaults
 
-New code defaults to conservative, disabled behavior:
-- New features off by default
+New code defaults to conservative behavior:
 - New permissions denied by default
 - New validations strict by default
 
@@ -152,7 +141,6 @@ New code defaults to conservative, disabled behavior:
 Each increment should be independently revertable:
 
 ```bash
-# If this commit breaks something, revert just this
 git revert HEAD
 ```
 
@@ -178,7 +166,7 @@ Each increment = one commit:
 ```bash
 # Good: Atomic, focused commits
 git commit -m "feat(tasks): add Task model with title and status"
-git commit -m "feat(tasks): add POST /api/tasks endpoint"
+git commit -m "feat(tasks): add POST /api/v1/tasks endpoint"
 git commit -m "feat(tasks): add CreateTaskForm component"
 
 # Bad: Large, unfocused commits
@@ -204,7 +192,6 @@ After each increment:
 
 - [ ] Tests pass
 - [ ] Build succeeds
-- [ ] Code compiles
 - [ ] Feature works (manual check if UI)
 - [ ] Commit is atomic and focused
-- [ ] Message follows conventions
+- [ ] Message follows conventional commits

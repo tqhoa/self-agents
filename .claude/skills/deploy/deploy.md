@@ -29,22 +29,22 @@
                               │  └────────┬────────────┘                                 │
                               │           │ merge                                        │
                               │           ▼                                              │
-                              │      main branch ─────────────────────────────────────►  │
+                              │      main branch ──────────────────────────────────────► │
                               └──────────────────────────────────────────────────────────┘
                                                                       │
-                              ┌────────────────────────────────────────┘
+                              ┌───────────────────────────────────────┘
                               ▼
                     ┌─────────────────────────────────┐
                     │  deploy.yml — triggers on main  │
                     │                                 │
-                    │  ① Version: v1.21.6 (auto)      │  ✅
-                    │  ② Test Backend                 │  ✅
-                    │  ③ Test Frontend                │  ✅
+                    │  ① Version: v1.2.0 (auto)       │  ✅
+                    │  ② Test Backend (pytest)        │  ✅
+                    │  ③ Test Frontend (vitest)       │  ✅
                     │  ④ Build Backend → GHCR         │  ✅
                     │  ⑤ Build Frontend → GHCR        │  ✅
-                    │  ⑥ Git Tag v1.21.6              │  ✅
+                    │  ⑥ Git Tag v1.2.0               │  ✅
                     │  ⑦ Deploy VPS (pull + up)       │  ✅
-                    │  ⑧ Telegram notify              │  ✅
+                    │  ⑧ Notify                       │  ✅
                     └─────────────────────────────────┘
                               │
             ┌─────────────────┼─────────────────┐
@@ -53,31 +53,26 @@
 │                            GHCR REGISTRY                                      │
 │                                                                               │
 │  ┌─────────────────────────────────────┐  ┌─────────────────────────────────┐ │
-│  │ runway-backend                      │  │ runway-frontend                 │ │
-│  │ v1.21.6 ✅  v1.21.5  v1.21.4  latest │  │ v1.21.6 ✅  v1.21.5  v1.21.4    │ │
+│  │ myapp-backend                       │  │ myapp-frontend                  │ │
+│  │ v1.2.0 ✅   v1.1.9   v1.1.8  latest │  │ v1.2.0 ✅   v1.1.9   v1.1.8    │ │
 │  └─────────────────────────────────────┘  └─────────────────────────────────┘ │
 │                                                                               │
-│  Rollback (30s): TAG=v1.21.5 docker compose up -d                             │
+│  Rollback (30s): TAG=v1.1.9 docker compose up -d                              │
 └───────────────────────────────────────────────────────────────────────────────┘
                               │
-                              ▼ docker pull v1.21.6
+                              ▼ docker pull v1.2.0
 ┌───────────────────────────────────────────────────────────────────────────────┐
 │                                 VPS                                           │
 │                                                                               │
 │  ┌─────────────────────────────────────────────────────────────────────────┐  │
 │  │ Nginx (SSL)                                                             │  │
-│  │ domain1 → :8000    domain2 → :3001    domain3 → :3000    domain4 → :5678│  │
+│  │ api.example.com → :8000    app.example.com → :3000                      │  │
 │  └─────────────────────────────────────────────────────────────────────────┘  │
 │                                                                               │
 │  ┌─────────────────────────────────────────────────────────────────────────┐  │
 │  │ Docker Containers                                                       │  │
-│  │ runway-backend:v1.21.6 ✅   runway-worker:v1.21.6 ✅   n8n:latest ✅      │  │
-│  │ runway-frontend:v1.21.6 ✅  postgres:15 ✅                                │  │
-│  └─────────────────────────────────────────────────────────────────────────┘  │
-│                                                                               │
-│  ┌─────────────────────────────────────────────────────────────────────────┐  │
-│  │ Systemd                                                                 │  │
-│  │ Redis (127.0.0.1 + 172.17.0.1) ✅    Marketing Next.js :3000 ✅          │  │
+│  │ myapp-backend:v1.2.0 ✅   myapp-worker:v1.2.0 ✅                         │  │
+│  │ myapp-frontend:v1.2.0 ✅  postgres:15 ✅   redis:7 ✅                     │  │
 │  └─────────────────────────────────────────────────────────────────────────┘  │
 └───────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -87,22 +82,30 @@
 ## 1. Local Development
 
 ### Setup
+
 ```bash
 # Clone repository
 git clone git@github.com:org/project.git
 cd project
 
-# Install dependencies
-npm install
-
-# Setup environment
+# Backend setup
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 cp .env.example .env
+alembic upgrade head
+uvicorn main:app --reload
 
-# Start development
+# Frontend setup
+cd frontend
+npm install
+cp .env.example .env.local
 npm run dev
 ```
 
 ### Development Flow
+
 1. Checkout từ `main` hoặc `dev` branch
 2. Tạo feature branch: `feature/add-user-auth`
 3. Code + test locally
@@ -111,7 +114,7 @@ npm run dev
 ```bash
 git checkout -b feature/add-user-auth
 # ... coding ...
-git add .
+git add backend/api/v1/auth.py backend/tests/integration/routes/test_auth.py
 git commit -m "feat(auth): add JWT authentication"
 git push origin feature/add-user-auth
 ```
@@ -164,32 +167,49 @@ on:
 jobs:
   test-backend:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
 
       - name: Install dependencies
-        run: npm ci
+        run: pip install -r requirements.txt
         working-directory: backend
 
       - name: Run linter
-        run: npm run lint
+        run: ruff check .
         working-directory: backend
 
       - name: Run tests
-        run: npm test -- --coverage
+        env:
+          DATABASE_URL: postgresql+asyncpg://test:test@localhost/test_db
+        run: pytest --cov=. --cov-fail-under=80 --cov-report=xml
         working-directory: backend
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
         with:
-          directory: backend/coverage
+          files: backend/coverage.xml
 
   test-frontend:
     runs-on: ubuntu-latest
@@ -212,7 +232,7 @@ jobs:
         working-directory: frontend
 
       - name: Run tests
-        run: npm test -- --coverage
+        run: npm run test:run
         working-directory: frontend
 
       - name: Build check
@@ -232,8 +252,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  BACKEND_IMAGE: ghcr.io/${{ github.repository }}/runway-backend
-  FRONTEND_IMAGE: ghcr.io/${{ github.repository }}/runway-frontend
+  BACKEND_IMAGE: ghcr.io/${{ github.repository }}/myapp-backend
+  FRONTEND_IMAGE: ghcr.io/${{ github.repository }}/myapp-frontend
 
 jobs:
   # ① Auto Version
@@ -249,27 +269,40 @@ jobs:
       - name: Get next version
         id: version
         run: |
-          # Get latest tag
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
-          
-          # Increment patch version
           VERSION=$(echo $LATEST_TAG | awk -F. '{print $1"."$2"."$3+1}')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "📦 Version: $VERSION"
+          echo "Version: $VERSION"
 
   # ② Test Backend
   test-backend:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-python@v5
         with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
-      - run: npm ci
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
+      - run: pip install -r requirements.txt
         working-directory: backend
-      - run: npm test
+      - run: pytest --cov=. --cov-fail-under=80
+        env:
+          DATABASE_URL: postgresql+asyncpg://test:test@localhost/test_db
         working-directory: backend
 
   # ③ Test Frontend
@@ -284,7 +317,7 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
         working-directory: frontend
-      - run: npm test
+      - run: npm run test:run && npm run build
         working-directory: frontend
 
   # ④ Build Backend → GHCR
@@ -341,7 +374,7 @@ jobs:
             ${{ env.FRONTEND_IMAGE }}:${{ needs.version.outputs.version }}
             ${{ env.FRONTEND_IMAGE }}:latest
           build-args: |
-            NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}
+            VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}
           cache-from: type=registry,ref=${{ env.FRONTEND_IMAGE }}:buildcache
           cache-to: type=registry,ref=${{ env.FRONTEND_IMAGE }}:buildcache,mode=max
 
@@ -374,31 +407,34 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd /opt/app
-            
+
             # Login to GHCR
             echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            
+
             # Pull new images
             export TAG=${{ needs.version.outputs.version }}
             docker compose pull
-            
+
+            # Run database migrations
+            docker compose run --rm backend alembic upgrade head
+
             # Deploy with zero-downtime
             docker compose up -d --remove-orphans
-            
+
             # Cleanup old images
             docker image prune -f
-            
+
             # Health check
             sleep 10
             curl -f http://localhost:8000/health || exit 1
 
-  # ⑧ Telegram Notify
+  # ⑧ Notify
   notify:
     needs: [version, deploy]
     runs-on: ubuntu-latest
     if: always()
     steps:
-      - name: Send Telegram notification
+      - name: Send notification
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -406,13 +442,13 @@ jobs:
           format: markdown
           message: |
             ${{ needs.deploy.result == 'success' && '✅' || '❌' }} *Deploy ${{ needs.version.outputs.version }}*
-            
+
             Repository: `${{ github.repository }}`
             Branch: `${{ github.ref_name }}`
             Commit: `${{ github.sha }}`
-            
+
             Status: *${{ needs.deploy.result }}*
-            
+
             [View Action](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 ```
 
@@ -421,30 +457,32 @@ jobs:
 ## 3. GHCR Registry
 
 ### Image Naming Convention
+
 ```
 ghcr.io/{owner}/{repo}/{service}:{version}
 
 # Examples
-ghcr.io/myorg/myproject/runway-backend:v1.21.6
-ghcr.io/myorg/myproject/runway-frontend:v1.21.6
-ghcr.io/myorg/myproject/runway-worker:v1.21.6
+ghcr.io/myorg/myproject/myapp-backend:v1.2.0
+ghcr.io/myorg/myproject/myapp-frontend:v1.2.0
+ghcr.io/myorg/myproject/myapp-worker:v1.2.0
 ```
 
 ### Image Tags
+
 | Tag | Description |
 |-----|-------------|
-| `v1.21.6` | Specific version (immutable) |
+| `v1.2.0` | Specific version (immutable) |
 | `latest` | Latest stable release |
-| `main` | Latest from main branch |
 
 ### Manual Rollback (30 seconds)
+
 ```bash
 # SSH vào VPS
 ssh user@vps
+cd /opt/app
 
 # Rollback to previous version
-cd /opt/app
-export TAG=v1.21.5
+export TAG=v1.1.9
 docker compose up -d
 
 # Verify rollback
@@ -457,6 +495,7 @@ curl http://localhost:8000/health
 ## 4. VPS Infrastructure
 
 ### 4.1 Directory Structure
+
 ```
 /opt/app/
 ├── docker-compose.yml
@@ -465,8 +504,7 @@ curl http://localhost:8000/health
 │   ├── nginx.conf
 │   └── conf.d/
 │       ├── backend.conf
-│       ├── frontend.conf
-│       └── n8n.conf
+│       └── frontend.conf
 ├── data/
 │   ├── postgres/
 │   └── redis/
@@ -474,50 +512,48 @@ curl http://localhost:8000/health
 ```
 
 ### 4.2 Docker Compose
+
 ```yaml
 # docker-compose.yml
-version: '3.8'
-
 services:
   backend:
-    image: ghcr.io/myorg/myproject/runway-backend:${TAG:-latest}
-    container_name: runway-backend
+    image: ghcr.io/myorg/myproject/myapp-backend:${TAG:-latest}
+    container_name: myapp-backend
     restart: unless-stopped
     ports:
       - "8000:8000"
     environment:
-      - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
   worker:
-    image: ghcr.io/myorg/myproject/runway-backend:${TAG:-latest}
-    container_name: runway-worker
+    image: ghcr.io/myorg/myproject/myapp-backend:${TAG:-latest}
+    container_name: myapp-worker
     restart: unless-stopped
-    command: ["npm", "run", "worker"]
     environment:
-      - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
     depends_on:
       - backend
       - redis
+    command: ["celery", "-A", "jobs.celery_app", "worker", "--loglevel=info"]
 
   frontend:
-    image: ghcr.io/myorg/myproject/runway-frontend:${TAG:-latest}
-    container_name: runway-frontend
+    image: ghcr.io/myorg/myproject/myapp-frontend:${TAG:-latest}
+    container_name: myapp-frontend
     restart: unless-stopped
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=production
 
   postgres:
     image: postgres:15
@@ -535,21 +571,17 @@ services:
       timeout: 5s
       retries: 5
 
-  n8n:
-    image: n8nio/n8n:latest
-    container_name: n8n
+  redis:
+    image: redis:7
+    container_name: redis
     restart: unless-stopped
-    ports:
-      - "5678:5678"
     volumes:
-      - ./data/n8n:/home/node/.n8n
-    environment:
-      - N8N_HOST=${N8N_HOST}
-      - N8N_PROTOCOL=https
-      - WEBHOOK_URL=${N8N_WEBHOOK_URL}
+      - ./data/redis:/data
+    command: ["redis-server", "--appendonly", "yes"]
 ```
 
 ### 4.3 Nginx Configuration
+
 ```nginx
 # /etc/nginx/conf.d/backend.conf
 upstream backend {
@@ -578,92 +610,50 @@ server {
 }
 ```
 
-### 4.4 Systemd Services
-
-#### Redis Service
-```ini
-# /etc/systemd/system/redis.service
-[Unit]
-Description=Redis In-Memory Data Store
-After=network.target
-
-[Service]
-User=redis
-Group=redis
-ExecStart=/usr/bin/redis-server /etc/redis/redis.conf
-ExecStop=/usr/bin/redis-cli shutdown
-Restart=always
-RestartSec=3
-
-[Install]
-WantedBy=multi-user.target
-```
-
-#### Marketing Next.js Service
-```ini
-# /etc/systemd/system/marketing.service
-[Unit]
-Description=Marketing Next.js App
-After=network.target
-
-[Service]
-Type=simple
-User=www-data
-WorkingDirectory=/opt/marketing
-ExecStart=/usr/bin/npm start
-Restart=on-failure
-RestartSec=10
-Environment=NODE_ENV=production
-Environment=PORT=3000
-
-[Install]
-WantedBy=multi-user.target
-```
-
-### 4.5 Port Mapping
+### 4.4 Port Mapping
 
 | Domain | Internal Port | Service |
 |--------|---------------|---------|
-| api.example.com | :8000 | Backend API |
-| app.example.com | :3000 | Frontend App |
-| admin.example.com | :3001 | Admin Dashboard |
-| n8n.example.com | :5678 | n8n Automation |
+| api.example.com | :8000 | FastAPI Backend |
+| app.example.com | :3000 | Vue Frontend |
 
 ---
 
 ## 5. Monitoring & Health Checks
 
-### Health Endpoints
-```bash
-# Backend health
-curl https://api.example.com/health
+### Health Endpoint
 
-# Response
+```bash
+curl https://api.example.com/health
+```
+
+Expected response:
+```json
 {
   "status": "healthy",
-  "version": "v1.21.6",
-  "uptime": "2d 5h 30m",
+  "version": "v1.2.0",
   "checks": {
     "database": "ok",
-    "redis": "ok",
-    "queue": "ok"
+    "redis": "ok"
   }
 }
 ```
 
 ### Docker Health Monitoring
+
 ```bash
 # Check all containers
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 # Check logs
-docker logs -f runway-backend --tail 100
+docker logs -f myapp-backend --tail 100
 
 # Resource usage
 docker stats
 ```
 
 ### Useful Commands
+
 ```bash
 # View deployment logs
 docker compose logs -f
@@ -675,7 +665,10 @@ docker compose restart backend
 docker compose up -d --scale worker=3
 
 # Enter container
-docker exec -it runway-backend sh
+docker exec -it myapp-backend sh
+
+# Check migration status
+docker compose run --rm backend alembic current
 ```
 
 ---
@@ -683,6 +676,7 @@ docker exec -it runway-backend sh
 ## 6. Troubleshooting
 
 ### Deploy Failed
+
 ```bash
 # 1. Check GitHub Actions logs
 # 2. SSH to VPS and check manually
@@ -696,12 +690,13 @@ docker compose up -d
 ```
 
 ### Rollback Steps
+
 ```bash
 # 1. Find previous working version
 git tag -l | tail -5
 
 # 2. Deploy previous version
-export TAG=v1.21.5
+export TAG=v1.1.9
 docker compose up -d
 
 # 3. Verify
@@ -709,15 +704,19 @@ curl https://api.example.com/health
 ```
 
 ### Database Migration Failed
+
 ```bash
 # 1. Check migration status
-docker exec runway-backend npx prisma migrate status
+docker compose run --rm backend alembic current
 
-# 2. Manual migration
-docker exec runway-backend npx prisma migrate deploy
+# 2. Check migration history
+docker compose run --rm backend alembic history
 
-# 3. If needed, rollback migration
-docker exec runway-backend npx prisma migrate resolve --rolled-back <migration_name>
+# 3. Manual rollback one step
+docker compose run --rm backend alembic downgrade -1
+
+# 4. Manual deploy with specific revision
+docker compose run --rm backend alembic upgrade <revision>
 ```
 
 ---
@@ -728,8 +727,7 @@ docker exec runway-backend npx prisma migrate resolve --rolled-back <migration_n
 - [ ] Firewall configured (ufw/iptables)
 - [ ] SSL certificates auto-renewed (certbot)
 - [ ] Docker socket not exposed
-- [ ] Environment variables secured
-- [ ] GHCR token rotated periodically
-- [ ] VPS SSH key stored in GitHub Secrets
+- [ ] Environment variables secured (not in image)
+- [ ] GHCR token stored in GitHub Secrets
 - [ ] Database backups automated
 - [ ] Logs rotated and monitored
