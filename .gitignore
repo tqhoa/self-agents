@@ -10,31 +10,5 @@
 .claude/settings.local.json
 .claude/CLAUDE.local.md
 
-# Dependencies
-node_modules/
-
-# Build output
-dist/
-build/
-out/
-
-# Logs
-logs/
-*.log
-npm-debug.log*
-
 # OS
 .DS_Store
-Thumbs.db
-
-# IDE
-.vscode/settings.json
-.idea/
-
-# Test coverage
-coverage/
-.nyc_output/
-
-# Temporary files
-tmp/
-temp/
