@@ -28,7 +28,6 @@ Don't delete code just because it looks unnecessary. Investigate:
 - Git history: `git log -p -- path/to/file`
 - Related tests
 - Comments or documentation
-- Ask team members if unsure
 
 ### Rule of 500
 
@@ -44,8 +43,7 @@ If a function, file, or class exceeds ~500 lines, it likely needs splitting.
 # Recently modified complex code
 git diff --stat HEAD~10
 
-# Or specify scope
-# "Simplify the OrderService class"
+# Or specify scope: "Simplify the OrderService class"
 ```
 
 ### Step 2: Understand Before Changing
@@ -61,51 +59,31 @@ git diff --stat HEAD~10
 |---------|---------------|
 | Deep nesting (> 3 levels) | Guard clauses, extract helpers |
 | Long functions (> 30 lines) | Split by responsibility |
-| Nested ternaries | `if/else` or `switch` |
+| Nested ternaries | `if/else` or `match` (Python 3.10+) |
 | Unclear names | Rename for clarity |
 | Duplicated code | Extract shared function |
 | Dead code | Remove entirely |
 | Complex conditionals | Extract to named function |
-| Magic numbers | Named constants |
+| Magic numbers/strings | Named constants |
+| `for` loop with `append` | List/dict/set comprehension (Python) |
+| Manual `any`/`all` loop | Built-in `any()` / `all()` (Python) |
 
 ### Step 4: Apply Incrementally
 
-**One change at a time:**
-
-```javascript
-// Before: Deep nesting
-function processOrder(order) {
-  if (order) {
-    if (order.items.length > 0) {
-      if (order.status === 'pending') {
-        // ... actual logic buried here
-      }
-    }
-  }
-}
-
-// After: Guard clauses
-function processOrder(order) {
-  if (!order) return;
-  if (order.items.length === 0) return;
-  if (order.status !== 'pending') return;
-
-  // ... actual logic at top level
-}
-```
-
-**Run tests after each change.**
+**One change at a time. Run tests after each change.**
 
 ### Step 5: Validate
 
 ```bash
 # Backend
 pytest --cov=. --cov-fail-under=80
+mypy .
 
 # Frontend
 npm run test:run && npm run build
+tsc --noEmit
 
-# Behavior unchanged (manual check if needed)
+# Behavior unchanged — verify manually if needed
 ```
 
 ### Step 6: If Tests Fail
@@ -113,7 +91,7 @@ npm run test:run && npm run build
 **Revert immediately.** Don't debug while mid-simplification.
 
 ```bash
-git checkout -- .
+git restore .   # discard all unstaged changes
 ```
 
 Then:
@@ -125,54 +103,110 @@ Then:
 
 ## Common Simplifications
 
-### Extract Guard Clauses
+### Guard Clauses (Early Return)
 
+**Python:**
+```python
+# Before — deep nesting
+def process_order(order):
+    if order:
+        if order.items:
+            if order.status == "pending":
+                # actual logic buried here
+                pass
+
+# After — guard clauses
+def process_order(order: Order | None) -> None:
+    if not order:
+        return
+    if not order.items:
+        return
+    if order.status != "pending":
+        return
+
+    # actual logic at top level
+```
+
+**JavaScript:**
 ```javascript
 // Before
-function getDiscount(user) {
-  if (user) {
-    if (user.membership === 'premium') {
-      return 0.2;
-    } else {
-      return 0.1;
+function processOrder(order) {
+  if (order) {
+    if (order.items.length > 0) {
+      if (order.status === 'pending') {
+        // actual logic buried here
+      }
     }
   }
-  return 0;
 }
 
 // After
-function getDiscount(user) {
-  if (!user) return 0;
-  if (user.membership === 'premium') return 0.2;
-  return 0.1;
+function processOrder(order) {
+  if (!order) return;
+  if (order.items.length === 0) return;
+  if (order.status !== 'pending') return;
+
+  // actual logic at top level
 }
 ```
 
 ### Extract Named Functions
 
+**Python:**
+```python
+# Before — opaque filter condition
+eligible = [u for u in users
+            if u.age >= 18 and u.verified and not u.banned and u.plan != "free"]
+
+# After — named predicate
+def is_eligible(user: User) -> bool:
+    return u.age >= 18 and u.verified and not u.banned and u.plan != "free"
+
+eligible = [u for u in users if is_eligible(u)]
+```
+
+**JavaScript:**
 ```javascript
 // Before
-const eligibleUsers = users.filter(u => 
+const eligible = users.filter(u =>
   u.age >= 18 && u.verified && !u.banned && u.subscription !== 'free'
 );
 
 // After
 const isEligible = (user) =>
-  user.age >= 18 && 
-  user.verified && 
-  !user.banned && 
-  user.subscription !== 'free';
+  user.age >= 18 && user.verified && !user.banned && user.subscription !== 'free';
 
-const eligibleUsers = users.filter(isEligible);
+const eligible = users.filter(isEligible);
 ```
 
-### Replace Nested Ternary
+### Replace Nested Ternary / if-elif Chain
 
+**Python:**
+```python
+# Before — elif chain
+def get_discount(user: User) -> float:
+    if user.tier == "gold":
+        return 0.3
+    elif user.tier == "silver":
+        return 0.2
+    elif user.tier == "bronze":
+        return 0.1
+    else:
+        return 0.0
+
+# After — dict lookup (simple mapping)
+TIER_DISCOUNTS = {"gold": 0.3, "silver": 0.2, "bronze": 0.1}
+
+def get_discount(user: User) -> float:
+    return TIER_DISCOUNTS.get(user.tier, 0.0)
+```
+
+**JavaScript:**
 ```javascript
-// Before
+// Before — nested ternary
 const status = isPaid ? (isShipped ? 'complete' : 'processing') : 'pending';
 
-// After
+// After — early returns
 function getOrderStatus(isPaid, isShipped) {
   if (!isPaid) return 'pending';
   if (!isShipped) return 'processing';
@@ -180,14 +214,53 @@ function getOrderStatus(isPaid, isShipped) {
 }
 ```
 
+### Replace Loop with Comprehension (Python)
+
+```python
+# Before — for loop with append
+active_ids = []
+for user in users:
+    if user.is_active:
+        active_ids.append(user.id)
+
+# After — list comprehension
+active_ids = [user.id for user in users if user.is_active]
+
+# Before — manual any/all check
+has_admin = False
+for user in users:
+    if user.role == "admin":
+        has_admin = True
+        break
+
+# After — built-in
+has_admin = any(u.role == "admin" for u in users)
+```
+
 ### Remove Dead Code
 
+**Python:**
+```python
+# Before
+async def get_user(user_id: str) -> UserResponse:
+    # old_result = legacy_get_user(user_id)  # old path
+    user = await self.repo.find_by_id(user_id)
+    # print("debug:", user)
+    return UserResponse.model_validate(user)
+
+# After
+async def get_user(user_id: str) -> UserResponse:
+    user = await self.repo.find_by_id(user_id)
+    return UserResponse.model_validate(user)
+```
+
+**JavaScript:**
 ```javascript
 // Before
 function calculate(a, b) {
-  // const oldResult = legacyCalculate(a, b);  // Commented out
+  // const old = legacyCalc(a, b);
   const result = a + b;
-  // console.log('Debug:', result);  // Debug log
+  // console.log('Debug:', result);
   return result;
 }
 
@@ -207,15 +280,15 @@ Stop if you find yourself:
 - Unable to explain why code exists
 - Simplifying without tests
 - Making changes across unrelated files
-- Creating new abstractions
+- Creating new abstractions "for future use"
 
 ---
 
 ## Output
 
 - Simpler, clearer code
-- All tests still passing
-- Atomic commits with clear messages
+- All tests still passing (`pytest --cov-fail-under=80`, `mypy`, `tsc --noEmit`)
+- Atomic commits per simplification with clear messages
 
 ## Next Step
 
