@@ -62,14 +62,18 @@ Permissions-Policy: geolocation=(), camera=()
 ## Dependencies
 
 ```bash
-# Run regularly
+# JavaScript — run regularly
 npm audit
 npm audit fix
+
+# Python — run regularly
+pip-audit
+pip-audit --fix
 ```
 
 - [ ] No critical vulnerabilities
 - [ ] Dependencies up to date
-- [ ] Lock file committed
+- [ ] Lock file committed (`package-lock.json` / `requirements.txt`)
 
 ## Error Handling
 

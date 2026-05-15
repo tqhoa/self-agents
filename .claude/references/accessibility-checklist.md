@@ -11,21 +11,20 @@
 - [ ] No keyboard traps
 - [ ] Custom components work with Enter/Space
 
-```jsx
-// ✅ Good: Custom button with keyboard support
+```html
+<!-- ✅ Better: Use native button -->
+<button @click="handleClick">Click me</button>
+
+<!-- ✅ If custom element needed: use role + keyboard handler -->
 <div
   role="button"
-  tabIndex={0}
-  onClick={handleClick}
-  onKeyDown={(e) => {
-    if (e.key === 'Enter' || e.key === ' ') handleClick();
-  }}
+  tabindex="0"
+  @click="handleClick"
+  @keydown.enter="handleClick"
+  @keydown.space.prevent="handleClick"
 >
   Click me
 </div>
-
-// ✅ Better: Use native button
-<button onClick={handleClick}>Click me</button>
 ```
 
 ## Screen Readers
@@ -43,21 +42,19 @@
 - [ ] Dynamic content announced (aria-live)
 - [ ] Modals trap focus and have aria-modal
 
-```jsx
-// ✅ Good: Accessible form
-<label htmlFor="email">Email</label>
+```html
+<!-- ✅ Accessible form (Vue) -->
+<label for="email">Email</label>
 <input id="email" type="email" aria-describedby="email-hint" />
 <span id="email-hint">We'll never share your email</span>
 
-// ✅ Good: Accessible icon button
+<!-- ✅ Accessible icon button -->
 <button aria-label="Close menu">
   <CloseIcon aria-hidden="true" />
 </button>
 
-// ✅ Good: Live region for updates
-<div aria-live="polite" aria-atomic="true">
-  {notification}
-</div>
+<!-- ✅ Live region for updates -->
+<div aria-live="polite" aria-atomic="true">{{ notification }}</div>
 ```
 
 ## Visual Design
@@ -96,18 +93,16 @@
 - [ ] Autocomplete attributes used
 - [ ] Form validation accessible
 
-```jsx
-// ✅ Accessible error message
+```html
+<!-- ✅ Accessible error message (Vue) -->
 <input
   id="email"
-  aria-invalid={hasError}
-  aria-describedby={hasError ? 'email-error' : undefined}
+  :aria-invalid="hasError"
+  :aria-describedby="hasError ? 'email-error' : undefined"
 />
-{hasError && (
-  <span id="email-error" role="alert">
-    Please enter a valid email address
-  </span>
-)}
+<span v-if="hasError" id="email-error" role="alert">
+  Please enter a valid email address
+</span>
 ```
 
 ## Interactive Components

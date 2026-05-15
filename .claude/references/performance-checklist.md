@@ -31,23 +31,32 @@
 - [ ] Bundle size monitored (< 200KB initial)
 - [ ] No unused dependencies
 
-### React Specific
-- [ ] Memoize expensive computations (useMemo)
-- [ ] Prevent unnecessary re-renders (React.memo)
-- [ ] Virtualize long lists (react-window)
-- [ ] Use Suspense for code splitting
+### Vue 3 Specific
+- [ ] Use `computed` for derived state — not methods called in templates
+- [ ] Use `v-memo` for expensive list items that rarely change
+- [ ] Use `shallowRef` / `shallowReactive` for large objects that don't need deep reactivity
+- [ ] Virtualize long lists (`vue-virtual-scroller`)
+- [ ] Avoid `watch` with deep: true on large objects — use specific watchers
 
-```javascript
-// ✅ Good: Memoized component
-const ExpensiveList = React.memo(({ items }) => {
-  return items.map(item => <Item key={item.id} {...item} />);
-});
+```vue
+<script setup lang="ts">
+import { computed, shallowRef } from 'vue';
 
-// ✅ Good: Memoized computation
-const sortedItems = useMemo(
-  () => items.sort((a, b) => a.name.localeCompare(b.name)),
-  [items]
+// ✅ computed — cached, only recalculates when deps change
+const sortedItems = computed(() =>
+  [...props.items].sort((a, b) => a.name.localeCompare(b.name))
 );
+
+// ✅ shallowRef — large list, only track reference changes
+const largeDataset = shallowRef<Row[]>([]);
+</script>
+
+<template>
+  <!-- ✅ v-memo — skip re-render if selected/focused unchanged -->
+  <div v-for="item in items" :key="item.id" v-memo="[item.id === selectedId]">
+    <ExpensiveItem :item="item" />
+  </div>
+</template>
 ```
 
 ## Backend Performance
@@ -59,46 +68,59 @@ const sortedItems = useMemo(
 - [ ] Connection pooling configured
 - [ ] Query timeouts set
 
-```javascript
-// ❌ N+1 Problem
+```python
+# ❌ N+1 Problem (Python/SQLAlchemy)
+users = (await db.execute(select(UserModel))).scalars().all()
+for user in users:
+    orders = (await db.execute(
+        select(OrderModel).where(OrderModel.user_id == user.id)
+    )).scalars().all()
+
+# ✅ Fixed: eager load with selectinload
+from sqlalchemy.orm import selectinload
+users = (await db.execute(
+    select(UserModel).options(selectinload(UserModel.orders))
+)).scalars().all()
+```
+
+```js
+// ❌ N+1 Problem (JS/Prisma)
 const users = await db.user.findMany();
 for (const user of users) {
   user.orders = await db.order.findMany({ where: { userId: user.id } });
 }
 
-// ✅ Fixed: Include relation
-const users = await db.user.findMany({
-  include: { orders: true }
-});
+// ✅ Fixed: include relation
+const users = await db.user.findMany({ include: { orders: true } });
 ```
 
 ### Caching
+
 - [ ] Cache frequently accessed data
 - [ ] Appropriate TTLs set
 - [ ] Cache invalidation strategy
 - [ ] CDN for static content
 
-```javascript
-// Cache pattern
-async function getUser(id) {
-  const cached = await redis.get(`user:${id}`);
-  if (cached) return JSON.parse(cached);
-  
-  const user = await db.user.findUnique({ where: { id } });
-  await redis.setex(`user:${id}`, 3600, JSON.stringify(user));
-  return user;
-}
+```python
+# Python cache pattern
+async def get_user(user_id: str) -> dict:
+    cached = await redis.get(f"myapp:v1:user:{user_id}")
+    if cached:
+        return json.loads(cached)
+    user = await user_repo.find_by_id(user_id)
+    await redis.setex(f"myapp:v1:user:{user_id}", 3600, json.dumps(user))
+    return user
 ```
 
 ### API
 - [ ] Response compression (gzip/brotli)
 - [ ] Pagination for lists
-- [ ] Field selection (select only needed)
-- [ ] Async operations for slow tasks
+- [ ] Select only needed fields
+- [ ] Async operations for slow tasks (queue them)
 
-```javascript
-// ✅ Good: Paginated API
-GET /api/users?page=1&limit=20&fields=id,name,email
+```
+# ✅ Paginated API
+GET /api/v1/users?page=1&limit=20
 ```
 
 ## Measurement Commands
@@ -107,11 +129,9 @@ GET /api/users?page=1&limit=20&fields=id,name,email
 # Lighthouse (Chrome)
 npx lighthouse https://example.com --output=json
 
-# Bundle analysis
-npx webpack-bundle-analyzer stats.json
-
-# Check bundle size
-npx bundlephobia <package-name>
+# Bundle analysis (Vite)
+npm run build -- --report
+npx vite-bundle-visualizer
 
 # Database query analysis
 EXPLAIN ANALYZE SELECT * FROM users WHERE email = '...';
@@ -121,6 +141,10 @@ redis-cli --latency
 
 # API response time
 curl -o /dev/null -s -w '%{time_total}\n' https://api.example.com/users
+
+# Python profiling
+python -m cProfile -o profile.stats main.py
+python -m pstats profile.stats
 ```
 
 ## Performance Budget
@@ -141,7 +165,7 @@ curl -o /dev/null -s -w '%{time_total}\n' https://api.example.com/users
 - [ ] Performance tracked in CI
 
 ```javascript
-// Example: Track Core Web Vitals
+// Track Core Web Vitals
 import { onLCP, onINP, onCLS } from 'web-vitals';
 
 onLCP(metric => sendToAnalytics('LCP', metric.value));
