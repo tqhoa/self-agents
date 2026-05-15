@@ -9,26 +9,26 @@ description: Decompose specs into small, verifiable tasks with dependency orderi
 
 ## Purpose
 
-Transform a specification into an ordered list of small, verifiable tasks. Each task delivers end-to-end functionality.
+Transform a specification into an ordered list of small, verifiable tasks. Each task delivers end-to-end functionality through all required layers.
 
 ## Prerequisites
 
-- A specification exists (`SPEC.md` or described requirements)
+- Approved spec exists at `docs/specs/[feature-name].md`
 - Understanding of the codebase structure
 
 ## Workflow
 
 ### Phase 1: Analysis (Read-Only)
 
-1. **Read the spec** — Understand objectives and acceptance criteria
-2. **Survey the codebase** — Identify relevant files, patterns, and integration points
+1. **Read the spec** — Understand objectives, layer, and acceptance criteria
+2. **Survey the codebase** — Identify relevant files, patterns, integration points
 3. **Map dependencies** — Which components depend on which?
 
 > **Do NOT modify code during planning.**
 
 ### Phase 2: Vertical Slicing
 
-Break work into **vertical slices** — each slice delivers complete functionality through all layers:
+Break work into **vertical slices** — each slice delivers complete functionality through all required layers:
 
 ```
 ❌ Horizontal (anti-pattern):
@@ -42,40 +42,45 @@ Break work into **vertical slices** — each slice delivers complete functionali
    Task 3: User can mark task complete (DB + API + UI)
 ```
 
+Backend-only features slice by endpoint. Frontend-only features slice by user interaction.
+
 ### Phase 3: Task Definition
 
 Each task must include:
 
 ```markdown
-## Task: [Short description]
+## Task [N]: [Short description]
 
-**Objective**: [What this achieves]
+**Layer**: Backend (FastAPI) / Frontend (Vue 3) / Full-stack
+
+**Objective**: [What this achieves end-to-end]
 
 **Files to modify**:
 - `domain/repositories/task_repository.py`
 - `api/v1/tasks.py`
 - `features/tasks/components/TaskList.vue`
 
+**Test first** (TDD):
+- Write failing test in `tests/unit/` or `tests/integration/`
+- Implement until test passes
+- Refactor
+
 **Acceptance Criteria**:
 - [ ] User can [action]
 - [ ] [Validation] is enforced
-- [ ] Test covers [scenario]
+- [ ] Unit/integration test covers [scenario]
+- [ ] Coverage ≥ 80%
 
-**Dependencies**: [Task IDs this depends on]
-
-**Verification**:
-- [ ] Unit tests pass
-- [ ] Integration test added
-- [ ] Manual verification: [steps]
+**Dependencies**: [Task IDs this depends on, or "none"]
 ```
 
 ### Phase 4: Ordering
 
 Order tasks by:
-1. **Foundation first** — DB models, types, shared utilities
+1. **Foundation first** — DB models/migrations, Pydantic schemas, shared utilities
 2. **Risk-first** — Tackle uncertain/complex items early
 3. **Dependencies** — Respect the dependency graph
-4. **Quick wins** — Early momentum with smaller tasks
+4. **Quick wins** — Early momentum with simpler tasks
 
 ### Phase 5: Checkpoints
 
@@ -83,43 +88,45 @@ Insert checkpoints between major phases:
 
 ```markdown
 ---
-## Checkpoint: Core CRUD Complete
+## Checkpoint: [Phase Name] Complete
 
 **Verify before proceeding**:
-- [ ] All CRUD operations work
-- [ ] Test coverage > 80%
-- [ ] No console errors
-- [ ] Performance acceptable
+- [ ] All acceptance criteria met
+- [ ] Test coverage ≥ 80% (`pytest --cov=. --cov-fail-under=80`)
+- [ ] `alembic upgrade head` runs cleanly (if migrations added)
+- [ ] No type errors (`mypy` / `tsc --noEmit`)
+- [ ] API contracts match `api-conventions.md`
 
 ---
 ```
 
 ## Output
 
-Save to `tasks/` directory:
-
-- `tasks/plan.md` — Full planning document with context
-- `tasks/todo.md` — Actionable task checklist
+Save to `docs/plans/[feature-name].md`:
 
 ```markdown
-# TODO: [Feature Name]
+# Plan: [Feature Name]
+
+**Spec**: `docs/specs/[feature-name].md`
+**Layer**: Backend / Frontend / Full-stack
 
 ## Phase 1: Foundation
-- [ ] Task 1.1: [Description]
-- [ ] Task 1.2: [Description]
+- [ ] Task 1.1: [Description] — `[files affected]`
+- [ ] Task 1.2: [Description] — `[files affected]`
 
 ## Checkpoint: Foundation Complete
 
 ## Phase 2: Core Features
-- [ ] Task 2.1: [Description]
-- [ ] Task 2.2: [Description]
+- [ ] Task 2.1: [Description] — `[files affected]`
+- [ ] Task 2.2: [Description] — `[files affected]`
 
 ## Checkpoint: Core Complete
 
-## Phase 3: Polish
+## Phase 3: Polish & Tests
 - [ ] Task 3.1: [Description]
+- [ ] Task 3.2: Coverage audit — ensure ≥ 80%
 ```
 
 ## Next Step
 
-After plan is approved, run `/build` to implement tasks incrementally.
+After plan approved → run `/build` to implement tasks incrementally (TDD: RED → GREEN → REFACTOR).
