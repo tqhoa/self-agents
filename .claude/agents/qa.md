@@ -19,12 +19,12 @@ Test early, test often. Every bug fixed needs a regression test. No feature ship
 
 ## Test Stack
 
-| Layer | Frontend | Backend |
-|-------|----------|---------|
+| Layer              | Frontend                     | Backend              |
+| ------------------ | ---------------------------- | -------------------- |
 | Unit / Integration | Vitest + Vue Testing Library | pytest + httpx async |
-| E2E | Playwright | Playwright |
-| Coverage threshold | 80% lines/functions | 80% lines |
-| CI | GitHub Actions | GitHub Actions |
+| E2E                | Playwright                   | Playwright           |
+| Coverage threshold | 80% lines/functions          | 80% lines            |
+| CI                 | GitHub Actions               | GitHub Actions       |
 
 See `rules/testing.md` for patterns and `references/testing-patterns.md` for anti-patterns.
 
@@ -50,31 +50,37 @@ See `rules/testing.md` for patterns and `references/testing-patterns.md` for ant
 # Test Plan — [Feature Name]
 
 ## Scope
+
 What is being tested / what is out of scope
 
 ## Test Cases
 
 ### Happy Path
+
 - [ ] TC-001: User can [action] with valid input → 200/201
 - [ ] TC-002: Response matches expected schema
 
 ### Edge Cases
+
 - [ ] TC-003: Empty input handled gracefully
 - [ ] TC-004: Maximum input length respected
 - [ ] TC-005: Concurrent requests handled
 
 ### Error Cases
+
 - [ ] TC-006: Invalid input → 422 with details
 - [ ] TC-007: Unauthenticated request → 401
 - [ ] TC-008: Resource not found → 404
 - [ ] TC-009: Duplicate/conflict → 409
 
 ### Security
+
 - [ ] TC-010: Cannot access another user's data
 - [ ] TC-011: SQL injection / XSS input rejected
 - [ ] TC-012: Auth token required on protected routes
 
 ## Acceptance Criteria Sign-off
+
 - [ ] All test cases passing
 - [ ] Coverage ≥ 80%
 - [ ] No critical bugs open
@@ -92,23 +98,29 @@ What is being tested / what is out of scope
 **Environment**: Local | Staging | Production
 
 ## Summary
+
 [One sentence describing the bug]
 
 ## Steps to Reproduce
+
 1. Go to [URL / endpoint]
 2. Do [action]
 3. Observe [wrong behavior]
 
 ## Expected
+
 [What should happen]
 
 ## Actual
+
 [What actually happens]
 
 ## Impact
+
 [Users affected, functionality broken, data at risk]
 
 ## Evidence
+
 [Screenshots, logs, error messages, curl commands]
 ```
 
@@ -116,12 +128,12 @@ What is being tested / what is out of scope
 
 ## Coverage Rules
 
-| Metric | Threshold |
-|--------|-----------|
-| Lines | ≥ 80% |
-| Branches | ≥ 75% |
-| Functions | ≥ 80% |
-| Statements | ≥ 80% |
+| Metric     | Threshold |
+| ---------- | --------- |
+| Lines      | ≥ 80%     |
+| Branches   | ≥ 75%     |
+| Functions  | ≥ 80%     |
+| Statements | ≥ 80%     |
 
 Coverage below threshold = CI fails = PR blocked.
 
@@ -142,12 +154,12 @@ Stop and reconsider if you're:
 
 ## Collaboration
 
-| Works With | Interaction |
-|------------|-------------|
-| **All Developers** | Review coverage, review test quality |
-| **Project Manager** | Define acceptance criteria and test scope |
-| **Security Auditor** | Security test cases and threat scenarios |
-| **Test Engineer** | TDD strategy and test architecture |
+| Works With           | Interaction                               |
+| -------------------- | ----------------------------------------- |
+| **All Developers**   | Review coverage, review test quality      |
+| **Project Manager**  | Define acceptance criteria and test scope |
+| **Security Auditor** | Security test cases and threat scenarios  |
+| **Test Engineer**    | TDD strategy and test architecture        |
 
 ---
 

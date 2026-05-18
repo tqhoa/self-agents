@@ -54,6 +54,7 @@ curl -X POST http://localhost:8000/api/v1/path \
 ```
 
 If not reproducible:
+
 - Check for timing/race conditions
 - Check environment differences (env vars, DB state)
 - Check test isolation (shared mutable state)
@@ -72,24 +73,24 @@ If you can't write a test, document why. Then fix.
 
 ### Step 4: Identify Root Cause
 
-| Symptom | Likely Root Cause |
-|---------|------------------|
-| Duplicate results | N+1 or missing `DISTINCT` in query |
-| `MissingGreenlet` error | `expire_on_commit=True` on async SA session |
-| 401 on valid token | JWT expiry too short or clock skew |
-| `NoneType` access | Missing null check, data not loaded |
-| Stale data after mutation | Missing `invalidateQueries` |
+| Symptom                       | Likely Root Cause                               |
+| ----------------------------- | ----------------------------------------------- |
+| Duplicate results             | N+1 or missing `DISTINCT` in query              |
+| `MissingGreenlet` error       | `expire_on_commit=True` on async SA session     |
+| 401 on valid token            | JWT expiry too short or clock skew              |
+| `NoneType` access             | Missing null check, data not loaded             |
+| Stale data after mutation     | Missing `invalidateQueries`                     |
 | Test passes locally, fails CI | Async ordering, missing `asyncio_mode = "auto"` |
-| `v-html` XSS | Unsanitized user content rendered directly |
+| `v-html` XSS                  | Unsanitized user content rendered directly      |
 
 **Fix the root cause. Never patch symptoms:**
 
-| Symptom | Bad Fix | Good Fix |
-|---------|---------|----------|
-| Duplicate list items | Dedupe in UI | Fix query |
+| Symptom              | Bad Fix             | Good Fix                         |
+| -------------------- | ------------------- | -------------------------------- |
+| Duplicate list items | Dedupe in UI        | Fix query                        |
 | Null reference error | Add `?.` everywhere | Ensure data loaded before access |
-| Slow response | Increase timeout | Optimize query + add index |
-| Flaky test | Add retry | Fix race condition |
+| Slow response        | Increase timeout    | Optimize query + add index       |
+| Flaky test           | Add retry           | Fix race condition               |
 
 ### Step 5: Implement Minimal Fix
 
@@ -105,6 +106,7 @@ tsc --noEmit              # verify no new type errors
 ```
 
 Follow:
+
 - `rules/error-handling.md` — error handling patterns
 - `rules/code-style.md` — formatting (Black/Ruff for Python, ESLint for TS)
 - `rules/security.md` — if the bug has security implications

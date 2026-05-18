@@ -25,6 +25,7 @@ Simplify code for clarity and maintainability. Reduce complexity **without chang
 > Before removing something, understand why it exists.
 
 Don't delete code just because it looks unnecessary. Investigate:
+
 - Git history: `git log -p -- path/to/file`
 - Related tests
 - Comments or documentation
@@ -55,18 +56,18 @@ git diff --stat HEAD~10
 
 ### Step 3: Identify Opportunities
 
-| Pattern | Simplification |
-|---------|---------------|
-| Deep nesting (> 3 levels) | Guard clauses, extract helpers |
-| Long functions (> 30 lines) | Split by responsibility |
-| Nested ternaries | `if/else` or `match` (Python 3.10+) |
-| Unclear names | Rename for clarity |
-| Duplicated code | Extract shared function |
-| Dead code | Remove entirely |
-| Complex conditionals | Extract to named function |
-| Magic numbers/strings | Named constants |
-| `for` loop with `append` | List/dict/set comprehension (Python) |
-| Manual `any`/`all` loop | Built-in `any()` / `all()` (Python) |
+| Pattern                     | Simplification                       |
+| --------------------------- | ------------------------------------ |
+| Deep nesting (> 3 levels)   | Guard clauses, extract helpers       |
+| Long functions (> 30 lines) | Split by responsibility              |
+| Nested ternaries            | `if/else` or `match` (Python 3.10+)  |
+| Unclear names               | Rename for clarity                   |
+| Duplicated code             | Extract shared function              |
+| Dead code                   | Remove entirely                      |
+| Complex conditionals        | Extract to named function            |
+| Magic numbers/strings       | Named constants                      |
+| `for` loop with `append`    | List/dict/set comprehension (Python) |
+| Manual `any`/`all` loop     | Built-in `any()` / `all()` (Python)  |
 
 ### Step 4: Apply Incrementally
 
@@ -95,6 +96,7 @@ git restore .   # discard all unstaged changes
 ```
 
 Then:
+
 1. Reassess the change
 2. Make a smaller change
 3. Or add missing tests first
@@ -106,6 +108,7 @@ Then:
 ### Guard Clauses (Early Return)
 
 **Python:**
+
 ```python
 # Before — deep nesting
 def process_order(order):
@@ -128,12 +131,13 @@ def process_order(order: Order | None) -> None:
 ```
 
 **JavaScript:**
+
 ```javascript
 // Before
 function processOrder(order) {
   if (order) {
     if (order.items.length > 0) {
-      if (order.status === 'pending') {
+      if (order.status === "pending") {
         // actual logic buried here
       }
     }
@@ -144,7 +148,7 @@ function processOrder(order) {
 function processOrder(order) {
   if (!order) return;
   if (order.items.length === 0) return;
-  if (order.status !== 'pending') return;
+  if (order.status !== "pending") return;
 
   // actual logic at top level
 }
@@ -153,6 +157,7 @@ function processOrder(order) {
 ### Extract Named Functions
 
 **Python:**
+
 ```python
 # Before — opaque filter condition
 eligible = [u for u in users
@@ -166,15 +171,19 @@ eligible = [u for u in users if is_eligible(u)]
 ```
 
 **JavaScript:**
+
 ```javascript
 // Before
-const eligible = users.filter(u =>
-  u.age >= 18 && u.verified && !u.banned && u.subscription !== 'free'
+const eligible = users.filter(
+  (u) => u.age >= 18 && u.verified && !u.banned && u.subscription !== "free",
 );
 
 // After
 const isEligible = (user) =>
-  user.age >= 18 && user.verified && !user.banned && user.subscription !== 'free';
+  user.age >= 18 &&
+  user.verified &&
+  !user.banned &&
+  user.subscription !== "free";
 
 const eligible = users.filter(isEligible);
 ```
@@ -182,6 +191,7 @@ const eligible = users.filter(isEligible);
 ### Replace Nested Ternary / if-elif Chain
 
 **Python:**
+
 ```python
 # Before — elif chain
 def get_discount(user: User) -> float:
@@ -202,15 +212,16 @@ def get_discount(user: User) -> float:
 ```
 
 **JavaScript:**
+
 ```javascript
 // Before — nested ternary
-const status = isPaid ? (isShipped ? 'complete' : 'processing') : 'pending';
+const status = isPaid ? (isShipped ? "complete" : "processing") : "pending";
 
 // After — early returns
 function getOrderStatus(isPaid, isShipped) {
-  if (!isPaid) return 'pending';
-  if (!isShipped) return 'processing';
-  return 'complete';
+  if (!isPaid) return "pending";
+  if (!isShipped) return "processing";
+  return "complete";
 }
 ```
 
@@ -240,6 +251,7 @@ has_admin = any(u.role == "admin" for u in users)
 ### Remove Dead Code
 
 **Python:**
+
 ```python
 # Before
 async def get_user(user_id: str) -> UserResponse:
@@ -255,6 +267,7 @@ async def get_user(user_id: str) -> UserResponse:
 ```
 
 **JavaScript:**
+
 ```javascript
 // Before
 function calculate(a, b) {

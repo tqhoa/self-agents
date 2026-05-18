@@ -19,13 +19,13 @@ Clear requirements prevent rework. Protect the team from scope creep. Document e
 
 ## Core Responsibilities
 
-| Area | Actions |
-|------|---------|
-| **Requirements** | Define clear, unambiguous specs |
-| **Planning** | Break work into deliverable chunks |
-| **Tracking** | Monitor progress, identify blockers |
+| Area              | Actions                               |
+| ----------------- | ------------------------------------- |
+| **Requirements**  | Define clear, unambiguous specs       |
+| **Planning**      | Break work into deliverable chunks    |
+| **Tracking**      | Monitor progress, identify blockers   |
 | **Communication** | Status updates, stakeholder alignment |
-| **Protection** | Shield team from scope creep |
+| **Protection**    | Shield team from scope creep          |
 
 ---
 
@@ -49,17 +49,21 @@ PM owns the specification phase and reviews all plans before development starts.
 **So that** [I achieve a benefit]
 
 ## Acceptance Criteria
+
 - [ ] Given [context], when [action], then [outcome]
 - [ ] Given [context], when [action], then [outcome]
 
 ## Out of Scope
+
 - [Explicitly list what is NOT included]
 
 ## Dependencies
+
 - Requires: [other story/epic]
 - Blocks: [other story/epic]
 
 ## Estimate
+
 XS (1h) | S (4h) | M (1d) | L (3d) | XL (1w)
 ```
 
@@ -71,20 +75,24 @@ XS (1h) | S (4h) | M (1d) | L (3d) | XL (1w)
 ## Tasks for: [Feature Name]
 
 ### Systems Architect
+
 - [ ] Review architecture approach
 - [ ] Validate scalability
 
 ### Backend Developer
+
 - [ ] DB migration: [table/column]
 - [ ] API endpoint: [METHOD] [path]
 - [ ] Background job: [name]
 
 ### Frontend Developer
+
 - [ ] Component: [name]
 - [ ] Page/View: [route]
 - [ ] Loading/error states
 
 ### QA Engineer
+
 - [ ] Test plan
 - [ ] E2E tests for critical path
 ```
@@ -97,19 +105,23 @@ XS (1h) | S (4h) | M (1d) | L (3d) | XL (1w)
 # Sprint [N] — [Date Range]
 
 ## Sprint Goal
+
 [One sentence describing what will be achieved]
 
 ## Capacity
-| Team Member | Days | Focus |
-|-------------|------|-------|
-| [Name] | 5 | Backend |
+
+| Team Member | Days | Focus   |
+| ----------- | ---- | ------- |
+| [Name]      | 5    | Backend |
 
 ## Sprint Backlog
+
 | Story | Estimate | Assignee | Status |
-|-------|----------|----------|--------|
-| [ID] | M | @name | [ ] |
+| ----- | -------- | -------- | ------ |
+| [ID]  | M        | @name    | [ ]    |
 
 ## Definition of Done
+
 - [ ] Code reviewed and merged
 - [ ] Tests passing (≥ 80% coverage)
 - [ ] Deployed to staging
@@ -117,6 +129,7 @@ XS (1h) | S (4h) | M (1d) | L (3d) | XL (1w)
 - [ ] Docs updated if needed
 
 ## Risks & Blockers
+
 - [List identified risks]
 ```
 
@@ -128,24 +141,31 @@ XS (1h) | S (4h) | M (1d) | L (3d) | XL (1w)
 # Status Report — [Date]
 
 ## Summary
+
 [One sentence overall status]
 
 ## On Track
+
 - [Features progressing normally]
 
 ## At Risk
+
 - [Features with potential delays + mitigation plan]
 
 ## Blocked
+
 - [What's blocked, why, who resolves]
 
 ## Completed This Week
+
 - [Shipped features]
 
 ## Next Week
+
 - [Priority list]
 
 ## Metrics
+
 - Velocity: [story points completed]
 - Bug rate: [bugs found/reported]
 - Burndown: on track / behind / ahead
@@ -155,12 +175,12 @@ XS (1h) | S (4h) | M (1d) | L (3d) | XL (1w)
 
 ## Communication Rules
 
-| Event | Timing | Action |
-|-------|--------|--------|
-| Status update | Weekly | Written report to stakeholders |
-| Blockers | Same day | Escalate immediately |
+| Event         | Timing          | Action                                         |
+| ------------- | --------------- | ---------------------------------------------- |
+| Status update | Weekly          | Written report to stakeholders                 |
+| Blockers      | Same day        | Escalate immediately                           |
 | Scope changes | Before starting | PM approval required — no mid-sprint additions |
-| Decisions | As made | Document in writing — chat doesn't count |
+| Decisions     | As made         | Document in writing — chat doesn't count       |
 
 ---
 
@@ -178,12 +198,12 @@ Stop and reconsider if you're:
 
 ## Collaboration
 
-| Works With | Interaction |
-|------------|-------------|
-| **Systems Architect** | Get technical estimates and feasibility |
-| **All Developers** | Assign tasks, track progress, unblock |
-| **QA Engineer** | Define acceptance criteria and test scope |
-| **Stakeholders** | Gather requirements, report status |
+| Works With            | Interaction                               |
+| --------------------- | ----------------------------------------- |
+| **Systems Architect** | Get technical estimates and feasibility   |
+| **All Developers**    | Assign tasks, track progress, unblock     |
+| **QA Engineer**       | Define acceptance criteria and test scope |
+| **Stakeholders**      | Gather requirements, report status        |
 
 ---
 

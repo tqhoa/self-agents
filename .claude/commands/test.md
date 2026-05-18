@@ -16,6 +16,7 @@ Write tests that prove code works correctly. Use the RED-GREEN-REFACTOR cycle fo
 ### RED: Write Failing Test First
 
 **Python (pytest):**
+
 ```python
 # tests/unit/services/test_user_service.py
 @pytest.mark.asyncio
@@ -39,22 +40,22 @@ async def test_find_by_id_raises_app_error_when_not_found(user_service, mock_rep
 ```
 
 **JavaScript (Vitest):**
+
 ```javascript
 // tests/unit/services/user-service.test.js
-describe('UserService.findById', () => {
-  it('should return user when found', async () => {
-    mockRepo.findById.mockResolvedValue({ id: 'user-123', email: 'a@b.com' });
+describe("UserService.findById", () => {
+  it("should return user when found", async () => {
+    mockRepo.findById.mockResolvedValue({ id: "user-123", email: "a@b.com" });
 
-    const result = await userService.findById('user-123');
+    const result = await userService.findById("user-123");
 
-    expect(result.id).toBe('user-123');
+    expect(result.id).toBe("user-123");
   });
 
-  it('should throw AppError when user does not exist', async () => {
+  it("should throw AppError when user does not exist", async () => {
     mockRepo.findById.mockResolvedValue(null);
 
-    await expect(userService.findById('nonexistent'))
-      .rejects.toThrow(AppError);
+    await expect(userService.findById("nonexistent")).rejects.toThrow(AppError);
   });
 });
 ```
@@ -64,6 +65,7 @@ Run tests — **they should fail** (proves nothing is implemented yet).
 ### GREEN: Write Minimal Code to Pass
 
 **Python:**
+
 ```python
 async def find_by_id(self, user_id: str) -> UserResponse:
     user = await self.repo.find_by_id(user_id)
@@ -73,6 +75,7 @@ async def find_by_id(self, user_id: str) -> UserResponse:
 ```
 
 **JavaScript:**
+
 ```javascript
 async findById(id) {
   const user = await this.repo.findById(id);
@@ -98,6 +101,7 @@ Run full suite — confirm tests **still pass**.
 ### Step 1: Write Test That Reproduces the Bug
 
 **Python:**
+
 ```python
 @pytest.mark.asyncio
 async def test_add_item_increments_quantity_when_product_already_in_cart(cart_service):
@@ -109,10 +113,11 @@ async def test_add_item_increments_quantity_when_product_already_in_cart(cart_se
 ```
 
 **JavaScript:**
+
 ```javascript
-it('should not duplicate items when adding same product twice', async () => {
-  await cart.addItem('product-1', 1);
-  await cart.addItem('product-1', 1);
+it("should not duplicate items when adding same product twice", async () => {
+  await cart.addItem("product-1", 1);
+  await cart.addItem("product-1", 1);
 
   expect(cart.items).toHaveLength(1);
   expect(cart.items[0].quantity).toBe(2);
@@ -147,11 +152,11 @@ tsc --noEmit
 
 ## Test Pyramid
 
-| Level | % | Speed | Scope |
-|-------|---|-------|-------|
-| **Unit** | 80% | ms | Single function, no I/O |
+| Level           | %   | Speed   | Scope                            |
+| --------------- | --- | ------- | -------------------------------- |
+| **Unit**        | 80% | ms      | Single function, no I/O          |
 | **Integration** | 15% | seconds | API + DB, component interactions |
-| **E2E** | 5% | minutes | Full user flows |
+| **E2E**         | 5%  | minutes | Full user flows                  |
 
 ---
 
@@ -160,6 +165,7 @@ tsc --noEmit
 ### Arrange-Act-Assert Pattern
 
 **Python:**
+
 ```python
 def test_calculate_total_applies_discount():
     # Arrange
@@ -174,8 +180,9 @@ def test_calculate_total_applies_discount():
 ```
 
 **JavaScript:**
+
 ```javascript
-it('should calculate total with discount', () => {
+it("should calculate total with discount", () => {
   // Arrange
   const cart = new Cart([{ price: 100 }]);
   cart.applyDiscount(10);
@@ -207,6 +214,7 @@ def test_rejects_short(v):
 ### Naming Conventions
 
 **Python:** `test_[behavior]_when_[condition]`
+
 ```python
 test_find_by_id_returns_user_when_found
 test_find_by_id_raises_app_error_when_not_found
@@ -214,10 +222,11 @@ test_create_order_raises_when_stock_insufficient
 ```
 
 **JavaScript:** `should [expected behavior] when [condition]`
+
 ```javascript
-'should return user when found'
-'should throw AppError when user not found'
-'should increment quantity when adding existing product'
+"should return user when found";
+"should throw AppError when user not found";
+"should increment quantity when adding existing product";
 ```
 
 ### One Behavior Per Test
@@ -239,6 +248,7 @@ def test_validate_email():
 ## Test Doubles
 
 Prefer in order:
+
 ```
 1. Real implementations (best — hit actual DB in integration tests)
 2. In-memory fakes (test DB, fake filesystem)
@@ -247,6 +257,7 @@ Prefer in order:
 ```
 
 **Python (AsyncMock):**
+
 ```python
 @pytest.fixture
 def mock_repo():
@@ -259,22 +270,23 @@ mock_repo.find_by_id.assert_awaited_once_with("1")
 ```
 
 **JavaScript (vi.fn):**
+
 ```javascript
-const mockRepo = { findById: vi.fn().mockResolvedValue({ id: '1' }) };
-expect(mockRepo.findById).toHaveBeenCalledWith('1');
+const mockRepo = { findById: vi.fn().mockResolvedValue({ id: "1" }) };
+expect(mockRepo.findById).toHaveBeenCalledWith("1");
 ```
 
 ---
 
 ## Anti-Patterns
 
-| Anti-Pattern | Problem | Fix |
-|--------------|---------|-----|
-| Testing internals | Breaks on refactor | Test inputs/outputs only |
-| Flaky tests | Erodes trust | Deterministic data, isolate state |
-| Over-mocking | False confidence | Prefer real implementations |
+| Anti-Pattern         | Problem                 | Fix                                     |
+| -------------------- | ----------------------- | --------------------------------------- |
+| Testing internals    | Breaks on refactor      | Test inputs/outputs only                |
+| Flaky tests          | Erodes trust            | Deterministic data, isolate state       |
+| Over-mocking         | False confidence        | Prefer real implementations             |
 | Shared mutable state | Tests affect each other | Reset in `beforeEach` / autouse fixture |
-| No assertions | Test always passes | Assert concrete outcomes |
+| No assertions        | Test always passes      | Assert concrete outcomes                |
 
 ---
 

@@ -9,19 +9,19 @@
 ```vue
 <!-- Always <script setup lang="ts"> — never Options API -->
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch } from "vue";
 
 // ✅ TypeScript generics for props — no runtime overhead
 interface Props {
   title: string;
   count?: number;
-  variant?: 'primary' | 'secondary' | 'ghost';
+  variant?: "primary" | "secondary" | "ghost";
 }
 
 // ✅ withDefaults for optional props
 const props = withDefaults(defineProps<Props>(), {
   count: 0,
-  variant: 'primary',
+  variant: "primary",
 });
 
 // ✅ Typed emits
@@ -64,6 +64,7 @@ defineExpose({ focus });
 ```
 
 ### Component Rules
+
 - Max 200 lines per component — extract sub-components if larger
 - No business logic in `components/ui/` — presentation only
 - Props down, events up — never mutate props directly
@@ -75,8 +76,8 @@ defineExpose({ focus });
 
 ```typescript
 // composables/useDebounce.ts
-import { onUnmounted, ref, watch } from 'vue';
-import type { Ref } from 'vue';
+import { onUnmounted, ref, watch } from "vue";
+import type { Ref } from "vue";
 
 // ✅ Named export, useXxx prefix
 export function useDebounce<T>(value: Ref<T>, delay = 300): Ref<T> {
@@ -99,29 +100,40 @@ export function useDebounce<T>(value: Ref<T>, delay = 300): Ref<T> {
 
 ```typescript
 // features/users/composables/useUserForm.ts — feature-specific composable
-import { ref } from 'vue';
-import { useForm } from 'vee-validate';
-import { toTypedSchema } from '@vee-validate/zod';
-import { z } from 'zod';
+import { ref } from "vue";
+import { useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/zod";
+import { z } from "zod";
 
 const userSchema = z.object({
-  email: z.string().email('Enter a valid email'),
-  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email("Enter a valid email"),
+  name: z.string().min(2, "Name must be at least 2 characters"),
 });
 
 export function useUserForm() {
-  const { handleSubmit, isSubmitting, errors, defineField, resetForm } = useForm({
-    validationSchema: toTypedSchema(userSchema),
-  });
+  const { handleSubmit, isSubmitting, errors, defineField, resetForm } =
+    useForm({
+      validationSchema: toTypedSchema(userSchema),
+    });
 
-  const [email, emailAttrs] = defineField('email');
-  const [name, nameAttrs] = defineField('name');
+  const [email, emailAttrs] = defineField("email");
+  const [name, nameAttrs] = defineField("name");
 
-  return { handleSubmit, isSubmitting, errors, resetForm, email, emailAttrs, name, nameAttrs };
+  return {
+    handleSubmit,
+    isSubmitting,
+    errors,
+    resetForm,
+    email,
+    emailAttrs,
+    name,
+    nameAttrs,
+  };
 }
 ```
 
 ### Composable Rules
+
 - Prefix: `useXxx`
 - Return reactive refs/computed — not raw values
 - Handle cleanup in `onUnmounted` or `watch`'s `onCleanup`
@@ -133,20 +145,20 @@ export function useUserForm() {
 
 ```typescript
 // stores/useUserStore.ts
-import { computed, ref } from 'vue';
-import { defineStore } from 'pinia';
-import type { User } from '@/types';
+import { computed, ref } from "vue";
+import { defineStore } from "pinia";
+import type { User } from "@/types";
 
 // ✅ Setup Store style (same as composables)
-export const useUserStore = defineStore('user', () => {
+export const useUserStore = defineStore("user", () => {
   // state
   const user = ref<User | null>(null);
-  const token = ref<string | null>(localStorage.getItem('token'));
+  const token = ref<string | null>(localStorage.getItem("token"));
 
   // getters
   const isAuthenticated = computed(() => !!token.value);
   const fullName = computed(() =>
-    user.value ? `${user.value.firstName} ${user.value.lastName}` : '',
+    user.value ? `${user.value.firstName} ${user.value.lastName}` : "",
   );
 
   // actions
@@ -156,13 +168,13 @@ export const useUserStore = defineStore('user', () => {
 
   function setToken(newToken: string) {
     token.value = newToken;
-    localStorage.setItem('token', newToken);
+    localStorage.setItem("token", newToken);
   }
 
   function logout() {
     user.value = null;
     token.value = null;
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
   }
 
   return { user, token, isAuthenticated, fullName, setUser, setToken, logout };
@@ -170,6 +182,7 @@ export const useUserStore = defineStore('user', () => {
 ```
 
 ### Pinia Rules
+
 - Use Setup Store style (not Options Store)
 - Store name: `useXxxStore`
 - Global state only — local state stays in component/composable
@@ -181,15 +194,15 @@ export const useUserStore = defineStore('user', () => {
 
 ```typescript
 // features/users/composables/useUser.ts
-import { computed } from 'vue';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
-import type { Ref } from 'vue';
-import { usersApi } from '@/api/endpoints/users.api';
+import { computed } from "vue";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
+import type { Ref } from "vue";
+import { usersApi } from "@/api/endpoints/users.api";
 
 // ✅ Wrap useQuery in composable
 export function useUser(userId: Ref<string>) {
   return useQuery({
-    queryKey: computed(() => ['user', userId.value]),
+    queryKey: computed(() => ["user", userId.value]),
     queryFn: () => usersApi.getById(userId.value),
     staleTime: 60_000,
     enabled: computed(() => !!userId.value),
@@ -202,7 +215,7 @@ export function useUpdateUser() {
   return useMutation({
     mutationFn: usersApi.update,
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['user', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["user", variables.id] });
     },
   });
 }
@@ -222,6 +235,7 @@ const { data: user, isPending, isError, refetch } = useUser(userId);
 ```
 
 ### TanStack Query Rules
+
 - Always handle `isPending`, `isError`, and success states
 - Query keys: `['resource', id]` — consistent shape across app
 - `staleTime` default: 60s for most data; 0 for frequently updated
@@ -233,8 +247,8 @@ const { data: user, isPending, isError, refetch } = useUser(userId);
 
 ```typescript
 // api/index.ts
-import axios from 'axios';
-import { useUserStore } from '@/stores/useUserStore';
+import axios from "axios";
+import { useUserStore } from "@/stores/useUserStore";
 
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -269,8 +283,8 @@ apiClient.interceptors.response.use(
 
 ```typescript
 // api/endpoints/users.api.ts
-import { apiClient } from '@/api';
-import type { User } from '@/types';
+import { apiClient } from "@/api";
+import type { User } from "@/types";
 
 export const usersApi = {
   getById: (id: string): Promise<User> => apiClient.get(`/api/v1/users/${id}`),
@@ -286,15 +300,15 @@ export const usersApi = {
 ```vue
 <!-- features/auth/components/LoginForm.vue -->
 <script setup lang="ts">
-import { useForm } from 'vee-validate';
-import { toTypedSchema } from '@vee-validate/zod';
-import { z } from 'zod';
-import { useAuthStore } from '../stores/auth.store';
+import { useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/zod";
+import { z } from "zod";
+import { useAuthStore } from "../stores/auth.store";
 
 const schema = toTypedSchema(
   z.object({
-    email: z.string().email('Enter a valid email'),
-    password: z.string().min(8, 'Password must be at least 8 characters'),
+    email: z.string().email("Enter a valid email"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
   }),
 );
 
@@ -302,8 +316,8 @@ const { handleSubmit, isSubmitting, errors, defineField } = useForm({
   validationSchema: schema,
 });
 
-const [email, emailAttrs] = defineField('email');
-const [password, passwordAttrs] = defineField('password');
+const [email, emailAttrs] = defineField("email");
+const [password, passwordAttrs] = defineField("password");
 
 // ✅ Store accessed at top of setup — not inline inside callbacks
 const authStore = useAuthStore();
@@ -316,18 +330,30 @@ const onSubmit = handleSubmit(async (values) => {
   <form novalidate @submit="onSubmit">
     <div>
       <label for="email">Email</label>
-      <input id="email" v-model="email" type="email" v-bind="emailAttrs" :aria-invalid="!!errors.email" />
+      <input
+        id="email"
+        v-model="email"
+        type="email"
+        v-bind="emailAttrs"
+        :aria-invalid="!!errors.email"
+      />
       <p v-if="errors.email" role="alert">{{ errors.email }}</p>
     </div>
 
     <div>
       <label for="password">Password</label>
-      <input id="password" v-model="password" type="password" v-bind="passwordAttrs" :aria-invalid="!!errors.password" />
+      <input
+        id="password"
+        v-model="password"
+        type="password"
+        v-bind="passwordAttrs"
+        :aria-invalid="!!errors.password"
+      />
       <p v-if="errors.password" role="alert">{{ errors.password }}</p>
     </div>
 
     <BaseButton type="submit" :loading="isSubmitting">
-      {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
+      {{ isSubmitting ? "Signing in..." : "Sign in" }}
     </BaseButton>
   </form>
 </template>
@@ -339,24 +365,24 @@ const onSubmit = handleSubmit(async (values) => {
 
 ```typescript
 // router/index.ts
-import { createRouter, createWebHistory } from 'vue-router';
-import { authGuard } from './guards/auth.guard';
+import { createRouter, createWebHistory } from "vue-router";
+import { authGuard } from "./guards/auth.guard";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      component: () => import('@/views/HomeView.vue'),   // ✅ Lazy load all views
+      path: "/",
+      component: () => import("@/views/HomeView.vue"), // ✅ Lazy load all views
     },
     {
-      path: '/login',
-      component: () => import('@/views/auth/LoginView.vue'),
+      path: "/login",
+      component: () => import("@/views/auth/LoginView.vue"),
       meta: { guestOnly: true },
     },
     {
-      path: '/dashboard',
-      component: () => import('@/views/dashboard/DashboardView.vue'),
+      path: "/dashboard",
+      component: () => import("@/views/dashboard/DashboardView.vue"),
       meta: { requiresAuth: true },
     },
   ],
@@ -368,8 +394,8 @@ export default router;
 
 ```typescript
 // router/guards/auth.guard.ts
-import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router';
-import { useUserStore } from '@/stores/useUserStore';
+import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
+import { useUserStore } from "@/stores/useUserStore";
 
 export function authGuard(
   to: RouteLocationNormalized,
@@ -380,8 +406,8 @@ export function authGuard(
   // app.use(pinia) — ensure pinia is installed before createRouter() in main.ts
   const { isAuthenticated } = useUserStore();
 
-  if (to.meta.requiresAuth && !isAuthenticated) return next('/login');
-  if (to.meta.guestOnly && isAuthenticated) return next('/dashboard');
+  if (to.meta.requiresAuth && !isAuthenticated) return next("/login");
+  if (to.meta.guestOnly && isAuthenticated) return next("/dashboard");
   next();
 }
 ```
@@ -393,11 +419,11 @@ export function authGuard(
 ```typescript
 // ✅ Strict types everywhere — tsconfig strict: true
 // ✅ Use type imports for type-only imports
-import type { User } from '@/types';
+import type { User } from "@/types";
 
 // ✅ Narrow union types properly
 function processUser(user: User | null): string {
-  if (!user) return 'Guest';
+  if (!user) return "Guest";
   return user.name;
 }
 
@@ -406,6 +432,6 @@ const data: any = response; // ❌
 
 // ✅ Use unknown + type guard instead
 function isUser(val: unknown): val is User {
-  return typeof val === 'object' && val !== null && 'id' in val;
+  return typeof val === "object" && val !== null && "id" in val;
 }
 ```

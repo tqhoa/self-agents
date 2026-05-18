@@ -31,6 +31,7 @@ Implement tasks one at a time using Test-Driven Development. Each increment leav
 #### Step 2: RED — Write Failing Test
 
 **Python (pytest):**
+
 ```python
 # tests/unit/services/test_task_service.py
 @pytest.mark.asyncio
@@ -42,13 +43,14 @@ async def test_create_task_returns_id_and_title(mock_repo):
 ```
 
 **JavaScript (Vitest):**
+
 ```javascript
 // tests/unit/services/task-service.test.js
-it('should create task with title and return id', async () => {
-  mockRepo.create.mockResolvedValue({ id: '1', title: 'Test' });
-  const result = await createTask({ title: 'Test' });
-  expect(result.id).toBe('1');
-  expect(result.title).toBe('Test');
+it("should create task with title and return id", async () => {
+  mockRepo.create.mockResolvedValue({ id: "1", title: "Test" });
+  const result = await createTask({ title: "Test" });
+  expect(result.id).toBe("1");
+  expect(result.title).toBe("Test");
 });
 ```
 
@@ -57,6 +59,7 @@ Run test — confirm it **fails**.
 #### Step 3: GREEN — Minimal Implementation
 
 **Python (FastAPI service):**
+
 ```python
 # domain/services/task_service.py
 async def create(self, data: CreateTaskRequest) -> TaskResponse:
@@ -65,6 +68,7 @@ async def create(self, data: CreateTaskRequest) -> TaskResponse:
 ```
 
 **JavaScript:**
+
 ```javascript
 // src/services/task-service.js
 async function createTask({ title }) {
@@ -108,19 +112,20 @@ git commit -m "feat(tasks): add create task service"
 #### Step 6: Mark Complete
 
 Update `docs/plans/[feature-name].md`:
+
 ```markdown
 - [x] Task 1.1: Create task service
 ```
 
 ### Rules
 
-| Rule | Why |
-|------|-----|
-| **~100-line limit** | Test before writing more than ~100 lines |
-| **Touch only what's needed** | Don't refactor adjacent code |
-| **Keep it building** | System must compile and tests pass after each increment |
-| **Rollback-friendly** | Each commit must be independently revertable |
-| **No feature flags** | Ship complete slices or keep behind server-side config |
+| Rule                         | Why                                                     |
+| ---------------------------- | ------------------------------------------------------- |
+| **~100-line limit**          | Test before writing more than ~100 lines                |
+| **Touch only what's needed** | Don't refactor adjacent code                            |
+| **Keep it building**         | System must compile and tests pass after each increment |
+| **Rollback-friendly**        | Each commit must be independently revertable            |
+| **No feature flags**         | Ship complete slices or keep behind server-side config  |
 
 ### When Stuck
 

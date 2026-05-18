@@ -1,6 +1,7 @@
 # Code Style Guide
 
 ## General Principles
+
 - **Clarity over cleverness** — Write code that is easy to read and understand
 - **Consistency** — Follow existing patterns in the codebase
 - **DRY** — Don't Repeat Yourself, but don't over-abstract
@@ -8,6 +9,7 @@
 ## JavaScript / TypeScript
 
 ### Formatting
+
 - Indentation: **2 spaces** (no tabs)
 - Max line length: **100 characters**
 - Use **single quotes** for strings
@@ -15,6 +17,7 @@
 - Trailing commas in multi-line structures
 
 ### Naming
+
 ```js
 // Variables and functions: camelCase
 const userProfile = {};
@@ -33,6 +36,7 @@ const API_BASE_URL = 'https://api.example.com';
 ```
 
 ### Functions
+
 ```js
 // ✅ Good — Arrow functions for simple operations
 const double = (x) => x * 2;
@@ -46,6 +50,7 @@ function processUserData(user) {
 ```
 
 ### Async/Await
+
 ```js
 // ✅ Always use async/await over raw promises
 async function fetchUser(id) {
@@ -62,14 +67,16 @@ fetchUser(id).then(...).catch(...);
 ```
 
 ### Imports
+
 ```js
 // Order: 1. Node built-ins, 2. External deps, 3. Internal modules
-import path from 'path';
-import express from 'express';
-import { UserService } from './user-service.js';
+import path from "path";
+import express from "express";
+import { UserService } from "./user-service.js";
 ```
 
 ## Comments
+
 ```js
 // ✅ Explain WHY, not WHAT
 // We retry 3 times because the external API has transient failures
@@ -81,6 +88,7 @@ const x = 5;
 ```
 
 ## File Organization
+
 - One class/service per file
 - Group related files in feature folders
 - Index files for clean imports
@@ -90,12 +98,13 @@ const x = 5;
 ## Python
 
 ### Toolchain (non-negotiable)
-| Tool | Purpose | Config |
-|------|---------|--------|
-| **Black** | Auto-formatter | `pyproject.toml` |
-| **Ruff** | Linter + isort | `pyproject.toml` |
-| **mypy** | Static type checker | `pyproject.toml` |
-| **pytest** | Test runner | `pyproject.toml` |
+
+| Tool       | Purpose             | Config           |
+| ---------- | ------------------- | ---------------- |
+| **Black**  | Auto-formatter      | `pyproject.toml` |
+| **Ruff**   | Linter + isort      | `pyproject.toml` |
+| **mypy**   | Static type checker | `pyproject.toml` |
+| **pytest** | Test runner         | `pyproject.toml` |
 
 ```toml
 # pyproject.toml
@@ -115,6 +124,7 @@ ignore_missing_imports = true
 ```
 
 ### Formatting
+
 - Indentation: **4 spaces** (no tabs)
 - Max line length: **88 characters** (Black default)
 - Strings: **double quotes** (Black enforces this)
@@ -122,6 +132,7 @@ ignore_missing_imports = true
 - No semicolons — one statement per line
 
 ### Naming Conventions
+
 ```python
 # Variables and functions: snake_case
 user_profile = {}
@@ -151,6 +162,7 @@ OrderList = list[Order]
 ```
 
 ### Type Hints
+
 ```python
 # ✅ Always annotate public function signatures
 def create_user(email: str, name: str, role: str = "user") -> User:
@@ -178,6 +190,7 @@ user = cast(User, raw_data)
 ```
 
 ### Functions
+
 ```python
 # ✅ Short, single-purpose — max ~30 lines
 async def get_user(user_id: str, db: AsyncSession) -> User:
@@ -206,6 +219,7 @@ def append_item(item: str, items: list[str] | None = None) -> list[str]:
 ```
 
 ### Classes
+
 ```python
 # ✅ Use @dataclass for plain data containers
 from dataclasses import dataclass, field
@@ -235,6 +249,7 @@ class User:
 ```
 
 ### Async / Await
+
 ```python
 # ✅ Use async/await for all I/O — never block the event loop
 async def fetch_user(user_id: str) -> User:
@@ -260,6 +275,7 @@ result = await asyncio.to_thread(heavy_cpu_task, data)
 ```
 
 ### Imports
+
 ```python
 # Order enforced by Ruff/isort:
 # 1. Standard library
@@ -280,6 +296,7 @@ from shared.exceptions import AppError
 ```
 
 ### Error Handling
+
 ```python
 # ✅ Catch specific exceptions — never bare except
 try:
@@ -303,6 +320,7 @@ except Exception:
 ```
 
 ### Comments and Docstrings
+
 ```python
 # ✅ Module-level docstring (brief, one line)
 """User service — business logic for user lifecycle management."""
@@ -330,6 +348,7 @@ user_count += 1  # increment user count  ❌
 ```
 
 ## File Organization (Python)
+
 - One class or cohesive group of functions per file
 - Module name = `snake_case.py`
 - Package `__init__.py` exports only the public interface

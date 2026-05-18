@@ -84,15 +84,15 @@ pip-audit --fix
 
 ## OWASP Top 10 Quick Check
 
-| # | Vulnerability | Check |
-|---|--------------|-------|
-| 1 | Broken Access Control | Auth on all endpoints? |
-| 2 | Cryptographic Failures | Secrets encrypted? HTTPS? |
-| 3 | Injection | Inputs sanitized? Queries parameterized? |
-| 4 | Insecure Design | Threat modeling done? |
-| 5 | Security Misconfiguration | Headers set? Defaults changed? |
-| 6 | Vulnerable Components | `npm audit` clean? |
-| 7 | Auth Failures | Rate limiting? Strong passwords? |
-| 8 | Data Integrity | Signatures verified? |
-| 9 | Logging Failures | Security events logged? |
-| 10 | SSRF | External URLs validated? |
+| #   | Vulnerability             | Check                                    |
+| --- | ------------------------- | ---------------------------------------- |
+| 1   | Broken Access Control     | Auth on all endpoints?                   |
+| 2   | Cryptographic Failures    | Secrets encrypted? HTTPS?                |
+| 3   | Injection                 | Inputs sanitized? Queries parameterized? |
+| 4   | Insecure Design           | Threat modeling done?                    |
+| 5   | Security Misconfiguration | Headers set? Defaults changed?           |
+| 6   | Vulnerable Components     | `npm audit` clean?                       |
+| 7   | Auth Failures             | Rate limiting? Strong passwords?         |
+| 8   | Data Integrity            | Signatures verified?                     |
+| 9   | Logging Failures          | Security events logged?                  |
+| 10  | SSRF                      | External URLs validated?                 |

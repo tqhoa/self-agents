@@ -1,6 +1,7 @@
 # Project Structure
 
 ## Environment Files (all stacks)
+
 - `.env` — Local development (gitignored)
 - `.env.example` — Template committed to git
 - `.env.test` — Test environment (gitignored)
@@ -11,6 +12,7 @@
 ## JavaScript / Node.js (Express)
 
 ### Folder Layout
+
 ```
 project-root/
 ├── .claude/                    # AI Agent configuration
@@ -48,6 +50,7 @@ project-root/
 ```
 
 ### Layered Architecture
+
 ```
 Request → Routes → Middleware → Controllers → Services → Repositories → Database
 ```
@@ -59,6 +62,7 @@ Request → Routes → Middleware → Controllers → Services → Repositories 
 - **Models**: Data schemas and types
 
 ### File Naming
+
 - Source files: `kebab-case.js` (`user-service.js`)
 - Test files: `[name].test.js` (`user-service.test.js`)
 - Config files: `kebab-case.js` or `kebab-case.json`
@@ -68,6 +72,7 @@ Request → Routes → Middleware → Controllers → Services → Repositories 
 ## Python / FastAPI
 
 ### Folder Layout
+
 ```
 project-root/
 ├── .claude/                    # AI Agent configuration
@@ -141,6 +146,7 @@ project-root/
 ```
 
 ### Layered Architecture
+
 ```
 Request → Router → Dependency → Endpoint → Service → Repository → Database
                        ↓
@@ -155,12 +161,14 @@ Request → Router → Dependency → Endpoint → Service → Repository → Da
 - **shared/**: Config, exceptions, helpers used across layers
 
 ### Import Direction (never reverse)
+
 ```
 api/ → domain/ → infrastructure/
 all layers → shared/
 ```
 
 ### File Naming
+
 - Source files: `snake_case.py` (`user_service.py`)
 - Test files: `test_[name].py` (`test_user_service.py`)
 - Packages: `snake_case/` (no hyphens in folder names)

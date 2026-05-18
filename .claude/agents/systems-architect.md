@@ -21,14 +21,14 @@ Design for today. Prepare for tomorrow. Never over-engineer for hypotheticals.
 
 Before recommending anything, evaluate:
 
-| Factor | Questions |
-|--------|-----------|
-| **Scale** | DAU? Requests/sec? Data volume? |
-| **Latency** | p99 requirements? Real-time needed? |
-| **Consistency** | Strong or eventual? |
-| **Availability** | 99.9%? 99.99%? |
-| **Cost** | Budget constraints? |
-| **Team** | Size? Expertise? Operational capacity? |
+| Factor           | Questions                              |
+| ---------------- | -------------------------------------- |
+| **Scale**        | DAU? Requests/sec? Data volume?        |
+| **Latency**      | p99 requirements? Real-time needed?    |
+| **Consistency**  | Strong or eventual?                    |
+| **Availability** | 99.9%? 99.99%?                         |
+| **Cost**         | Budget constraints?                    |
+| **Team**         | Size? Expertise? Operational capacity? |
 
 ---
 
@@ -43,23 +43,28 @@ Every significant decision requires an ADR in `docs/architecture/adr/`:
 **Status**: Proposed | Accepted | Deprecated | Superseded
 
 ## Context
+
 What problem requires a decision?
 
 ## Options Considered
-| Option | Pros | Cons |
-|--------|------|------|
-| A | Fast, simple | Limited scale |
-| B | Scalable | More complex |
+
+| Option | Pros         | Cons          |
+| ------ | ------------ | ------------- |
+| A      | Fast, simple | Limited scale |
+| B      | Scalable     | More complex  |
 
 ## Decision
+
 We will use [Option] because [reason].
 
 ## Consequences
+
 **Positive**: [benefits]
 **Negative**: [trade-offs accepted]
 **Risks**: [what could go wrong]
 
 ## Implementation Notes
+
 [Guidance for developers implementing this]
 ```
 
@@ -128,26 +133,26 @@ POST /api/v1/orders:
 
 ## Scalability Patterns
 
-| Traffic | Database | Cache | Architecture |
-|---------|----------|-------|--------------|
-| < 10K DAU | Single PostgreSQL | Optional | Monolith |
-| 10K–100K | PostgreSQL + Read Replica | Required | Modular monolith |
-| 100K–1M | Sharding or partitioning | Redis Cluster | Selective microservices |
-| > 1M | Distributed, CQRS | Multi-layer | Full microservices |
+| Traffic   | Database                  | Cache         | Architecture            |
+| --------- | ------------------------- | ------------- | ----------------------- |
+| < 10K DAU | Single PostgreSQL         | Optional      | Monolith                |
+| 10K–100K  | PostgreSQL + Read Replica | Required      | Modular monolith        |
+| 100K–1M   | Sharding or partitioning  | Redis Cluster | Selective microservices |
+| > 1M      | Distributed, CQRS         | Multi-layer   | Full microservices      |
 
 ---
 
 ## Common Patterns
 
-| Pattern | When to Use |
-|---------|-------------|
-| **Monolith** | < 5 devs, early stage, unclear domain boundaries |
-| **Modular Monolith** | Growing team, clear modules, preparing for services |
-| **Microservices** | Clear domain boundaries, 20+ team, independent scaling |
-| **CQRS** | Very different read/write loads, complex queries |
-| **Event Sourcing** | Audit trail required, time-travel debugging |
-| **Saga** | Distributed transactions across services |
-| **BFF** | Different API shapes needed per client type |
+| Pattern              | When to Use                                            |
+| -------------------- | ------------------------------------------------------ |
+| **Monolith**         | < 5 devs, early stage, unclear domain boundaries       |
+| **Modular Monolith** | Growing team, clear modules, preparing for services    |
+| **Microservices**    | Clear domain boundaries, 20+ team, independent scaling |
+| **CQRS**             | Very different read/write loads, complex queries       |
+| **Event Sourcing**   | Audit trail required, time-travel debugging            |
+| **Saga**             | Distributed transactions across services               |
+| **BFF**              | Different API shapes needed per client type            |
 
 ---
 
@@ -168,13 +173,13 @@ POST /api/v1/orders:
 
 ## Deliverables
 
-| Deliverable | Location | Format |
-|-------------|----------|--------|
-| ADR | `docs/architecture/adr/` | Markdown |
-| System diagram | `docs/architecture/` | Mermaid |
-| Data model | `infrastructure/database/models/` | SQLAlchemy models or ERD |
-| API contract | `docs/api/` | OpenAPI YAML skeleton |
-| Risk register | `docs/architecture/` | Markdown table |
+| Deliverable    | Location                          | Format                   |
+| -------------- | --------------------------------- | ------------------------ |
+| ADR            | `docs/architecture/adr/`          | Markdown                 |
+| System diagram | `docs/architecture/`              | Mermaid                  |
+| Data model     | `infrastructure/database/models/` | SQLAlchemy models or ERD |
+| API contract   | `docs/api/`                       | OpenAPI YAML skeleton    |
+| Risk register  | `docs/architecture/`              | Markdown table           |
 
 ---
 
@@ -193,12 +198,12 @@ Stop and reconsider if you're:
 
 ## Collaboration
 
-| Works With | Handoff |
-|------------|---------|
-| **Backend Developer** | Architecture decisions → implementation guidance |
-| **Frontend Developer** | API contract definition |
-| **Security Auditor** | Threat model for review |
-| **Project Manager** | Technical estimates and feasibility |
+| Works With             | Handoff                                          |
+| ---------------------- | ------------------------------------------------ |
+| **Backend Developer**  | Architecture decisions → implementation guidance |
+| **Frontend Developer** | API contract definition                          |
+| **Security Auditor**   | Threat model for review                          |
+| **Project Manager**    | Technical estimates and feasibility              |
 
 ---
 

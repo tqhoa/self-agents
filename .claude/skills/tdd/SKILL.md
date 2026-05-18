@@ -25,9 +25,10 @@ TDD transforms testing from an afterthought into the foundation of development. 
 Write a test that describes expected behavior. **It must fail.**
 
 **JavaScript (Vitest):**
+
 ```javascript
-describe('calculateDiscount', () => {
-  it('should apply 10% discount for orders over $100', () => {
+describe("calculateDiscount", () => {
+  it("should apply 10% discount for orders over $100", () => {
     const result = calculateDiscount(150);
     expect(result).toBe(15);
   });
@@ -37,6 +38,7 @@ describe('calculateDiscount', () => {
 Run: `npm run test:run` → Should **FAIL**
 
 **Python (pytest):**
+
 ```python
 def test_calculate_discount_applies_10_percent_for_orders_over_100():
     result = calculate_discount(150)
@@ -52,6 +54,7 @@ Run: `pytest -k "test_calculate_discount"` → Should **FAIL**
 Write **minimal** code to pass the test. No extras.
 
 **JavaScript:**
+
 ```javascript
 function calculateDiscount(amount) {
   if (amount > 100) return amount * 0.1;
@@ -62,6 +65,7 @@ function calculateDiscount(amount) {
 Run: `npm run test:run` → Should **PASS**
 
 **Python:**
+
 ```python
 def calculate_discount(amount: float) -> float:
     if amount > 100:
@@ -78,6 +82,7 @@ Run: `pytest -k "test_calculate_discount"` → Should **PASS**
 Improve code while keeping tests green.
 
 **JavaScript:**
+
 ```javascript
 const DISCOUNT_THRESHOLD = 100;
 const DISCOUNT_RATE = 0.1;
@@ -89,6 +94,7 @@ function calculateDiscount(amount) {
 ```
 
 **Python:**
+
 ```python
 DISCOUNT_THRESHOLD = 100
 DISCOUNT_RATE = 0.1
@@ -108,8 +114,9 @@ Run full suite → Should still **PASS**
 ### Step 1: Write Failing Test
 
 **JavaScript:**
+
 ```javascript
-it('should handle empty cart without error (bug #456)', () => {
+it("should handle empty cart without error (bug #456)", () => {
   const cart = new Cart([]);
   expect(() => cart.getTotal()).not.toThrow();
   expect(cart.getTotal()).toBe(0);
@@ -117,6 +124,7 @@ it('should handle empty cart without error (bug #456)', () => {
 ```
 
 **Python:**
+
 ```python
 def test_get_total_returns_zero_for_empty_cart():
     # Regression: bug #456 — empty cart raised ZeroDivisionError
@@ -166,10 +174,11 @@ npm run test:run
 ## Test Structure: AAA Pattern
 
 **JavaScript:**
+
 ```javascript
-it('should calculate tax for California', () => {
+it("should calculate tax for California", () => {
   // Arrange
-  const order = createOrder({ state: 'CA', subtotal: 100 });
+  const order = createOrder({ state: "CA", subtotal: 100 });
 
   // Act
   const tax = calculateTax(order);
@@ -180,6 +189,7 @@ it('should calculate tax for California', () => {
 ```
 
 **Python:**
+
 ```python
 def test_calculate_tax_for_california():
     # Arrange
@@ -200,14 +210,14 @@ Tests should be **Descriptive And Meaningful Phrases**.
 
 ```javascript
 // ✅ DAMP — Self-contained and clear
-it('should reject password without uppercase letter', () => {
-  const result = validatePassword('lowercase123!');
+it("should reject password without uppercase letter", () => {
+  const result = validatePassword("lowercase123!");
   expect(result.valid).toBe(false);
-  expect(result.errors).toContain('Must contain uppercase letter');
+  expect(result.errors).toContain("Must contain uppercase letter");
 });
 
 // ❌ Too DRY — Requires reading shared context
-it('should reject invalid password', () => {
+it("should reject invalid password", () => {
   expect(validate(INVALID_PASSWORD_NO_UPPER)).toBe(false);
 });
 ```
@@ -241,14 +251,14 @@ it('should reject invalid password', () => {
 
 ## Anti-Patterns
 
-| Pattern | Problem | Solution |
-|---------|---------|----------|
-| Testing internals | Breaks on refactor | Test behavior, not implementation |
-| Flaky tests | Erodes trust | Use deterministic data |
-| Over-mocking | False confidence | Prefer real implementations |
-| Snapshot abuse | Large diffs ignored | Use sparingly |
+| Pattern              | Problem                 | Solution                                  |
+| -------------------- | ----------------------- | ----------------------------------------- |
+| Testing internals    | Breaks on refactor      | Test behavior, not implementation         |
+| Flaky tests          | Erodes trust            | Use deterministic data                    |
+| Over-mocking         | False confidence        | Prefer real implementations               |
+| Snapshot abuse       | Large diffs ignored     | Use sparingly                             |
 | Shared mutable state | Tests affect each other | Reset in `beforeEach` / `autouse` fixture |
-| Testing frameworks | Wasted effort | Only test your code |
+| Testing frameworks   | Wasted effort           | Only test your code                       |
 
 ---
 

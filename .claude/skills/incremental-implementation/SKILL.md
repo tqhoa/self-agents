@@ -16,12 +16,14 @@ Build in thin vertical slices. Each increment leaves the system working and test
 ## When to Apply
 
 **Use this skill when:**
+
 - Multi-file changes
 - New features
 - Refactoring work
 - Any change > 100 lines
 
 **Skip for:**
+
 - Single-file, small changes
 - Simple bug fixes
 - Configuration updates
@@ -133,6 +135,7 @@ Never leave the codebase broken between commits.
 ### Safe Defaults
 
 New code defaults to conservative behavior:
+
 - New permissions denied by default
 - New validations strict by default
 

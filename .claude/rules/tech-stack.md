@@ -8,56 +8,57 @@
 
 ### Frontend
 
-| Layer | Primary Choice | Alternative | Avoid |
-|-------|---------------|-------------|-------|
-| **Framework — Landing/SEO** | Next.js 14+ (App Router) | — | CRA (deprecated) |
-| **Framework — Admin/Dashboard** | Vue 3 + Vite | React + Vite | Next.js (overkill for admin) |
-| **UI Components** | shadcn/ui + Radix UI | Chakra UI | MUI (too heavy) |
-| **Styling** | Tailwind CSS | CSS Modules | Styled-components (runtime cost) |
-| **State Management** | Pinia (Vue) / Zustand (React) | — | MobX, Recoil |
-| **Data Fetching** | TanStack Query | SWR | Axios alone |
-| **Forms** | VeeValidate + Zod | React Hook Form + Zod | — |
-| **Testing** | Vitest + Vue Testing Library | Jest | Mocha |
-| **E2E Testing** | Playwright | Cypress | Selenium |
+| Layer                           | Primary Choice                | Alternative           | Avoid                            |
+| ------------------------------- | ----------------------------- | --------------------- | -------------------------------- |
+| **Framework — Landing/SEO**     | Next.js 14+ (App Router)      | —                     | CRA (deprecated)                 |
+| **Framework — Admin/Dashboard** | Vue 3 + Vite                  | React + Vite          | Next.js (overkill for admin)     |
+| **UI Components**               | shadcn/ui + Radix UI          | Chakra UI             | MUI (too heavy)                  |
+| **Styling**                     | Tailwind CSS                  | CSS Modules           | Styled-components (runtime cost) |
+| **State Management**            | Pinia (Vue) / Zustand (React) | —                     | MobX, Recoil                     |
+| **Data Fetching**               | TanStack Query                | SWR                   | Axios alone                      |
+| **Forms**                       | VeeValidate + Zod             | React Hook Form + Zod | —                                |
+| **Testing**                     | Vitest + Vue Testing Library  | Jest                  | Mocha                            |
+| **E2E Testing**                 | Playwright                    | Cypress               | Selenium                         |
 
 ### Backend (Python)
 
-| Layer | Primary Choice | Alternative | Avoid |
-|-------|---------------|-------------|-------|
-| **Framework** | FastAPI | — | Flask (no async), Django (too heavy for API) |
-| **Language** | Python 3.12 | — | Python < 3.10 |
-| **ORM** | SQLAlchemy 2.0 async | — | Django ORM, Tortoise |
-| **Migrations** | Alembic | — | Manual SQL |
-| **Validation** | Pydantic v2 | — | marshmallow |
-| **Auth** | python-jose + passlib[bcrypt] | — | — |
-| **HTTP Client** | httpx (async) | — | requests (blocking) |
-| **Queue/Tasks** | Celery + Redis | — | — |
-| **Testing** | pytest + httpx | — | unittest |
-| **Type Checker** | mypy (strict) | — | — |
-| **Linter/Format** | Ruff + Black | — | flake8 + isort |
+| Layer             | Primary Choice                | Alternative | Avoid                                        |
+| ----------------- | ----------------------------- | ----------- | -------------------------------------------- |
+| **Framework**     | FastAPI                       | —           | Flask (no async), Django (too heavy for API) |
+| **Language**      | Python 3.12                   | —           | Python < 3.10                                |
+| **ORM**           | SQLAlchemy 2.0 async          | —           | Django ORM, Tortoise                         |
+| **Migrations**    | Alembic                       | —           | Manual SQL                                   |
+| **Validation**    | Pydantic v2                   | —           | marshmallow                                  |
+| **Auth**          | python-jose + passlib[bcrypt] | —           | —                                            |
+| **HTTP Client**   | httpx (async)                 | —           | requests (blocking)                          |
+| **Queue/Tasks**   | Celery + Redis                | —           | —                                            |
+| **Testing**       | pytest + httpx                | —           | unittest                                     |
+| **Type Checker**  | mypy (strict)                 | —           | —                                            |
+| **Linter/Format** | Ruff + Black                  | —           | flake8 + isort                               |
 
 ### Shared Infrastructure
 
-| Layer | Primary Choice | Alternative | Avoid |
-|-------|---------------|-------------|-------|
-| **Database** | PostgreSQL | — | MySQL (prefer PG) |
-| **Cache** | Redis | Upstash Redis | Memcached |
-| **Queue — Simple** | BullMQ (JS) / Celery (Python) | — | — |
-| **Queue — Enterprise** | RabbitMQ | Kafka (high-throughput) | — |
-| **File Storage** | AWS S3 / Cloudflare R2 | Supabase Storage | Local disk |
-| **Email** | Resend | SMTP + Nodemailer/smtplib | SendGrid (expensive) |
-| **Search** | PostgreSQL FTS (start here) | Meilisearch | Elasticsearch (unless needed) |
-| **Monitoring** | Grafana + Prometheus | Datadog | — |
-| **CI/CD** | GitHub Actions | — | Jenkins (legacy) |
-| **Containers** | Docker + Docker Compose | — | — |
-| **Deployment** | Railway/Fly.io (backend) + Vercel (frontend) | AWS | — |
-| **API Docs** | FastAPI auto-generated OpenAPI | Swagger/OpenAPI 3.0 | Postman only |
+| Layer                  | Primary Choice                               | Alternative               | Avoid                         |
+| ---------------------- | -------------------------------------------- | ------------------------- | ----------------------------- |
+| **Database**           | PostgreSQL                                   | —                         | MySQL (prefer PG)             |
+| **Cache**              | Redis                                        | Upstash Redis             | Memcached                     |
+| **Queue — Simple**     | BullMQ (JS) / Celery (Python)                | —                         | —                             |
+| **Queue — Enterprise** | RabbitMQ                                     | Kafka (high-throughput)   | —                             |
+| **File Storage**       | AWS S3 / Cloudflare R2                       | Supabase Storage          | Local disk                    |
+| **Email**              | Resend                                       | SMTP + Nodemailer/smtplib | SendGrid (expensive)          |
+| **Search**             | PostgreSQL FTS (start here)                  | Meilisearch               | Elasticsearch (unless needed) |
+| **Monitoring**         | Grafana + Prometheus                         | Datadog                   | —                             |
+| **CI/CD**              | GitHub Actions                               | —                         | Jenkins (legacy)              |
+| **Containers**         | Docker + Docker Compose                      | —                         | —                             |
+| **Deployment**         | Railway/Fly.io (backend) + Vercel (frontend) | AWS                       | —                             |
+| **API Docs**           | FastAPI auto-generated OpenAPI               | Swagger/OpenAPI 3.0       | Postman only                  |
 
 ---
 
 ## 🐍 Python Backend — FastAPI
 
 ### Why FastAPI
+
 - Native async/await (ASGI) — handles concurrent connections efficiently
 - Pydantic v2 auto-validates all request/response bodies — no manual schema writing
 - OpenAPI docs auto-generated at `/docs` and `/redoc`
@@ -65,6 +66,7 @@
 - Best-in-class performance for a Python web framework
 
 ### Setup
+
 ```bash
 pip install fastapi uvicorn[standard] sqlalchemy[asyncio] asyncpg alembic \
   pydantic-settings python-jose[cryptography] passlib[bcrypt] httpx \
@@ -75,6 +77,7 @@ uvicorn main:app --reload
 ```
 
 ### App Entry Point
+
 ```python
 # main.py
 from contextlib import asynccontextmanager
@@ -118,16 +121,16 @@ app.include_router(orders.router, prefix="/api/v1/orders", tags=["orders"])
 
 ### Decision Table
 
-| Tiêu chí | Next.js 14 (App Router) | Vue 3 + Vite (SPA) |
-|----------|------------------------|--------------------|
-| **Mục đích** | Landing page, marketing, blog | Admin panel, dashboard, internal tool |
-| **SEO** | ✅ SSR/SSG — Google index tốt | ❌ SPA — khó SEO |
-| **Lưu trữ** | Vercel (tối ưu nhất) | Cloudflare Pages, Netlify, S3 |
-| **Performance** | Server Components — ít JS gửi về client | Client-side rendering |
-| **State** | Server Components + Zustand | Pinia |
-| **Data Fetching** | TanStack Query (React Query) | TanStack Query (Vue) |
-| **API** | API Routes hoặc Server Actions | Gọi FastAPI backend qua axios |
-| **Build complexity** | Cao hơn | Đơn giản hơn |
+| Tiêu chí             | Next.js 14 (App Router)                 | Vue 3 + Vite (SPA)                    |
+| -------------------- | --------------------------------------- | ------------------------------------- |
+| **Mục đích**         | Landing page, marketing, blog           | Admin panel, dashboard, internal tool |
+| **SEO**              | ✅ SSR/SSG — Google index tốt           | ❌ SPA — khó SEO                      |
+| **Lưu trữ**          | Vercel (tối ưu nhất)                    | Cloudflare Pages, Netlify, S3         |
+| **Performance**      | Server Components — ít JS gửi về client | Client-side rendering                 |
+| **State**            | Server Components + Zustand             | Pinia                                 |
+| **Data Fetching**    | TanStack Query (React Query)            | TanStack Query (Vue)                  |
+| **API**              | API Routes hoặc Server Actions          | Gọi FastAPI backend qua axios         |
+| **Build complexity** | Cao hơn                                 | Đơn giản hơn                          |
 
 > **Rule**: Một project thường có **cả hai** — Next.js cho public site + Vue 3 cho admin.
 
@@ -141,6 +144,7 @@ npx create-next-app@latest my-landing \
 ```
 
 **Tại sao Next.js cho landing page:**
+
 - Server-Side Rendering (SSR) → Google crawl được nội dung
 - Static Site Generation (SSG) → build thành HTML tĩnh, lưu CDN, siêu nhanh
 - Image optimization tự động (`next/image`)
@@ -150,13 +154,14 @@ npx create-next-app@latest my-landing \
 ```tsx
 // app/layout.tsx — SEO metadata
 export const metadata: Metadata = {
-  title: { default: 'My App', template: '%s | My App' },
-  description: 'Mô tả trang chính',
-  openGraph: { type: 'website', locale: 'vi_VN', url: 'https://myapp.com' },
+  title: { default: "My App", template: "%s | My App" },
+  description: "Mô tả trang chính",
+  openGraph: { type: "website", locale: "vi_VN", url: "https://myapp.com" },
 };
 ```
 
 **Folder structure (App Router)**
+
 ```
 src/app/
 ├── (marketing)/          # Public pages (SSG/SSR)
@@ -184,12 +189,14 @@ npm install -D vitest @testing-library/vue @vue/test-utils
 ```
 
 **Tại sao Vue 3 SPA cho admin:**
+
 - Admin panel không cần SEO (đăng nhập mới vào được)
 - Pinia là state management chính thức của Vue 3 — đơn giản hơn Redux
 - Composition API + `<script setup>` — type-safe và dễ test
 - Hot reload nhanh với Vite
 
 **Key Rules:**
+
 - Dùng `<script setup lang="ts">` — không dùng Options API
 - Protected routes với auth guard trong Vue Router
 - Tất cả API calls qua centralized `apiClient` (axios)
@@ -200,6 +207,7 @@ npm install -D vitest @testing-library/vue @vue/test-utils
 ## 🗄️ Database — PostgreSQL
 
 ### Why PostgreSQL
+
 - ACID compliant, battle-tested
 - Excellent JSON support (`jsonb`) — avoids needing MongoDB in most cases
 - Full-text search built-in
@@ -207,6 +215,7 @@ npm install -D vitest @testing-library/vue @vue/test-utils
 - Best ORM support (SQLAlchemy for Python, Prisma/Drizzle for JS)
 
 ### Python — SQLAlchemy 2.0 async
+
 Full patterns in `database.md`.
 
 ```bash
@@ -221,6 +230,7 @@ alembic downgrade -1
 ```
 
 ### JavaScript — Prisma (TypeScript projects)
+
 ```bash
 npm install prisma @prisma/client
 npx prisma init --datasource-provider postgresql
@@ -229,6 +239,7 @@ npx prisma migrate deploy  # production
 ```
 
 ### PostgreSQL Best Practices
+
 - Use UUID / CUID for primary keys (not auto-increment integers for distributed systems)
 - Always add index on foreign keys and frequently queried columns
 - Use `jsonb` columns for flexible data instead of adding MongoDB
@@ -240,12 +251,14 @@ npx prisma migrate deploy  # production
 ## ⚡ Cache — Redis
 
 ### Why Redis
+
 - Sub-millisecond latency
 - Supports strings, hashes, lists, sets, sorted sets, streams
 - Built-in TTL, pub/sub, Lua scripts
 - Powers caching + queues + rate limiting + sessions
 
 ### Python (redis-py async)
+
 ```python
 # infrastructure/cache/client.py
 from redis.asyncio import Redis
@@ -263,9 +276,10 @@ async def get_or_set(key: str, fetcher, ttl: int = 3600):
 ```
 
 ### JavaScript (ioredis)
+
 ```ts
 // src/lib/redis.ts
-import Redis from 'ioredis';
+import Redis from "ioredis";
 
 export const redis = new Redis(process.env.REDIS_URL!, {
   maxRetriesPerRequest: 3,
@@ -274,6 +288,7 @@ export const redis = new Redis(process.env.REDIS_URL!, {
 ```
 
 ### Redis Key Naming → See `naming-conventions.md`
+
 ```
 myapp:v1:user:123:profile    (TTL: 1h)
 myapp:v1:session:abc123      (TTL: 7d)
@@ -286,18 +301,19 @@ myapp:v1:rate_limit:ip:...   (TTL: 15m)
 
 ### Decision Table
 
-| Tiêu chí | Celery/BullMQ | RabbitMQ | Kafka |
-|----------|--------------|----------|-------|
-| **Khi dùng** | Jobs đơn giản, retry, schedule | Microservices, routing phức tạp | Event streaming, log, billions messages |
-| **Setup** | Redis có sẵn | Cài thêm RabbitMQ | Cài thêm Kafka + Zookeeper |
-| **Retry** | ✅ Built-in | ✅ Dead Letter Queue | ✅ Consumer offset |
-| **Ordering** | ❌ Không đảm bảo | ✅ Per-queue | ✅ Per-partition |
-| **Replay** | ❌ | ❌ | ✅ Có thể replay |
-| **Độ phức tạp** | Thấp | Trung bình | Cao |
+| Tiêu chí        | Celery/BullMQ                  | RabbitMQ                        | Kafka                                   |
+| --------------- | ------------------------------ | ------------------------------- | --------------------------------------- |
+| **Khi dùng**    | Jobs đơn giản, retry, schedule | Microservices, routing phức tạp | Event streaming, log, billions messages |
+| **Setup**       | Redis có sẵn                   | Cài thêm RabbitMQ               | Cài thêm Kafka + Zookeeper              |
+| **Retry**       | ✅ Built-in                    | ✅ Dead Letter Queue            | ✅ Consumer offset                      |
+| **Ordering**    | ❌ Không đảm bảo               | ✅ Per-queue                    | ✅ Per-partition                        |
+| **Replay**      | ❌                             | ❌                              | ✅ Có thể replay                        |
+| **Độ phức tạp** | Thấp                           | Trung bình                      | Cao                                     |
 
 > **Rule**: Mặc định dùng **Celery** (Python) hoặc **BullMQ** (JS). Chỉ dùng RabbitMQ khi microservices. Chỉ dùng Kafka khi cần stream lớn hoặc replay.
 
 ### Celery — Python Default
+
 ```python
 # jobs/celery_app.py
 from celery import Celery
@@ -322,15 +338,19 @@ def send_welcome_email(self, user_id: str) -> None:
 ```
 
 ### BullMQ — JavaScript Default
-```ts
-import { Queue } from 'bullmq';
-import { redis } from '@/lib/redis';
 
-export const emailQueue = new Queue('email', {
+```ts
+import { Queue } from "bullmq";
+import { redis } from "@/lib/redis";
+
+export const emailQueue = new Queue("email", {
   connection: redis,
-  defaultJobOptions: { attempts: 3, backoff: { type: 'exponential', delay: 2000 } },
+  defaultJobOptions: {
+    attempts: 3,
+    backoff: { type: "exponential", delay: 2000 },
+  },
 });
-await emailQueue.add('send-welcome', { to: user.email, name: user.name });
+await emailQueue.add("send-welcome", { to: user.email, name: user.name });
 ```
 
 ### Queue Naming → See `naming-conventions.md`
@@ -342,6 +362,7 @@ await emailQueue.add('send-welcome', { to: user.email, name: user.name });
 ### API Documentation
 
 **FastAPI:**
+
 - OpenAPI docs auto-generated at `/docs` (Swagger UI) and `/redoc`
 - Add `summary`, `description`, `response_model`, and `responses` to endpoints
 - No extra dependencies needed
@@ -358,9 +379,11 @@ async def get_user(user_id: str, db: AsyncSession = Depends(get_db)) -> UserResp
 ```
 
 **Express/Node:**
+
 ```bash
 npm install swagger-ui-express @asteasolutions/zod-to-openapi
 ```
+
 - Auto-generate from Zod schemas
 - Mount at `/api-docs`
 - Keep `openapi.yaml` committed to repo
@@ -368,18 +391,21 @@ npm install swagger-ui-express @asteasolutions/zod-to-openapi
 ### README Template (mandatory for every service)
 
 **Python backend:**
+
 ```markdown
 # Service Name
 
 ## What it does (1-2 sentences)
 
 ## Tech Stack
+
 - Runtime: Python 3.12
 - Framework: FastAPI
 - Database: PostgreSQL (SQLAlchemy 2.0 + Alembic)
 - Cache: Redis
 
 ## Quick Start
+
 \`\`\`bash
 cp .env.example .env
 pip install -r requirements.txt
@@ -388,11 +414,14 @@ uvicorn main:app --reload
 \`\`\`
 
 ## Environment Variables → see .env.example
+
 ## API Documentation → /docs (dev only)
+
 ## Architecture → docs/architecture.md
 ```
 
 ### Architecture Diagrams (docs/architecture/)
+
 - Use **Mermaid** for all diagrams (version-controlled, no external tools)
 - Required diagrams: System context, Component diagram, Data flow, DB ERD
 
@@ -414,17 +443,18 @@ graph LR
 
 When **proposing a new library or technology**, evaluate against these criteria:
 
-| Criterion | Questions to ask |
-|-----------|-----------------|
-| **Necessity** | Does an approved alternative already solve this? |
-| **Maintenance** | Stars > 1k? Last commit < 6 months? |
-| **Type support** | Native type hints (Python) / native TS types (JS)? |
-| **Bundle size** | Check bundlephobia.com (JS) — is it worth the KB? |
-| **License** | Is it MIT/Apache? (No GPL in commercial products) |
-| **Security** | `npm audit` / `pip-audit` — zero high/critical vulnerabilities |
-| **Community** | Active issues/discussions? Stack Overflow answers? |
+| Criterion        | Questions to ask                                               |
+| ---------------- | -------------------------------------------------------------- |
+| **Necessity**    | Does an approved alternative already solve this?               |
+| **Maintenance**  | Stars > 1k? Last commit < 6 months?                            |
+| **Type support** | Native type hints (Python) / native TS types (JS)?             |
+| **Bundle size**  | Check bundlephobia.com (JS) — is it worth the KB?              |
+| **License**      | Is it MIT/Apache? (No GPL in commercial products)              |
+| **Security**     | `npm audit` / `pip-audit` — zero high/critical vulnerabilities |
+| **Community**    | Active issues/discussions? Stack Overflow answers?             |
 
 ### Decision Template
+
 ```markdown
 ## Technology Decision: [Library Name]
 

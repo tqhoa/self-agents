@@ -29,11 +29,13 @@ git pull origin main
 ### 2. Run Tests
 
 **Backend (FastAPI / Python):**
+
 ```bash
 pytest --cov=. --cov-fail-under=80
 ```
 
 **Frontend (Vue / Vitest):**
+
 ```bash
 npm run test:run && npm run build
 ```
@@ -47,6 +49,7 @@ alembic upgrade head
 ```
 
 Verify migration applied:
+
 ```bash
 alembic current
 ```
@@ -54,21 +57,25 @@ alembic current
 ### 4. Deploy
 
 **Backend (Railway):**
+
 ```bash
 railway up
 ```
 
 **Backend (Fly.io):**
+
 ```bash
 fly deploy
 ```
 
 **Frontend (Vercel):**
+
 ```bash
 vercel --prod
 ```
 
 **Docker Compose (self-hosted VPS):**
+
 ```bash
 docker compose -f docker-compose.prod.yml pull
 docker compose -f docker-compose.prod.yml up -d --remove-orphans
@@ -82,6 +89,7 @@ curl -f https://api.example.com/health || echo "Health check failed"
 ```
 
 Expected response:
+
 ```json
 {
   "status": "healthy",
@@ -108,27 +116,32 @@ docker compose logs --tail=50 -f backend
 ## Rollback
 
 **Railway:**
+
 ```bash
 railway rollback
 ```
 
 **Fly.io:**
+
 ```bash
 fly deploy --image registry.fly.io/app-name:<previous-version>
 ```
 
 **Vercel:**
+
 ```bash
 vercel rollback
 ```
 
 **Docker Compose (VPS):**
+
 ```bash
 export TAG=v1.1.9
 docker compose up -d
 ```
 
 **Database migration rollback:**
+
 ```bash
 alembic downgrade -1
 ```

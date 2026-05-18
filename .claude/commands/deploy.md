@@ -13,11 +13,11 @@ Deploy the application to a target environment with pre-deploy checks, migration
 
 ## Environments
 
-| Environment | Backend | Frontend |
-|-------------|---------|----------|
-| Local | `uvicorn main:app --reload` | `npm run dev` |
-| Staging | Railway / Fly.io (staging app) | Vercel preview |
-| Production | Railway / Fly.io (production) | Vercel production |
+| Environment | Backend                        | Frontend          |
+| ----------- | ------------------------------ | ----------------- |
+| Local       | `uvicorn main:app --reload`    | `npm run dev`     |
+| Staging     | Railway / Fly.io (staging app) | Vercel preview    |
+| Production  | Railway / Fly.io (production)  | Vercel production |
 
 ---
 
@@ -147,12 +147,12 @@ vercel rollback
 
 ## Staged Rollout Rules
 
-| Change Type | Deploy To | Verify | Then |
-|-------------|-----------|--------|------|
-| Bug fix | Staging → Production | Health + smoke | Same day |
-| New feature | Staging (24h soak) | Full test suite | Next day |
-| DB migration | Staging first | Verify data | Then prod |
-| Breaking change | Staging → 10% prod | Monitor errors | Full rollout |
+| Change Type     | Deploy To            | Verify          | Then         |
+| --------------- | -------------------- | --------------- | ------------ |
+| Bug fix         | Staging → Production | Health + smoke  | Same day     |
+| New feature     | Staging (24h soak)   | Full test suite | Next day     |
+| DB migration    | Staging first        | Verify data     | Then prod    |
+| Breaking change | Staging → 10% prod   | Monitor errors  | Full rollout |
 
 ---
 

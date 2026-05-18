@@ -47,6 +47,7 @@ Systematically scan the codebase for security vulnerabilities and produce a prio
 - [ ] Missing security headers (`Helmet` not applied / FastAPI middleware missing)
 - [ ] CORS configured too broadly (`origins=["*"]` in production)
 - [ ] Dependencies with known vulnerabilities
+
   ```bash
   # JavaScript
   npm audit --audit-level=moderate
@@ -54,6 +55,7 @@ Systematically scan the codebase for security vulnerabilities and produce a prio
   # Python
   pip-audit
   ```
+
 - [ ] Sensitive data in logs (PII, tokens, passwords)
 - [ ] Missing HTTPS enforcement
 
@@ -127,17 +129,22 @@ Report structure:
 # Security Review Report — [Date]
 
 ## CRITICAL
+
 [file:line references with description and fix]
 
 ## HIGH
+
 [file:line references with description and fix]
 
 ## MEDIUM
+
 [file:line references with description and fix]
 
 ## LOW
+
 [file:line references with description and fix]
 
 ## Recommendations
+
 [Prioritized action items]
 ```

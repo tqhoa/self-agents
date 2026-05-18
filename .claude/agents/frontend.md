@@ -19,20 +19,20 @@ Users should achieve their goals without fighting the UI. Performance, accessibi
 
 ## Tech Stack
 
-| Layer | Choice |
-|-------|--------|
-| Framework | Vue 3 — Composition API + `<script setup>` |
-| Language | TypeScript 5+ (strict mode, never `any`) |
-| Build Tool | Vite 5+ |
-| Routing | Vue Router 4 |
-| Styling | Tailwind CSS + CSS Variables |
-| Components | Element UI / Shadcn UI |
-| State | Pinia (global) + `ref`/`reactive` (local) |
+| Layer        | Choice                                         |
+| ------------ | ---------------------------------------------- |
+| Framework    | Vue 3 — Composition API + `<script setup>`     |
+| Language     | TypeScript 5+ (strict mode, never `any`)       |
+| Build Tool   | Vite 5+                                        |
+| Routing      | Vue Router 4                                   |
+| Styling      | Tailwind CSS + CSS Variables                   |
+| Components   | Element UI / Shadcn UI                         |
+| State        | Pinia (global) + `ref`/`reactive` (local)      |
 | Server State | TanStack Query for Vue (`@tanstack/vue-query`) |
-| Forms | VeeValidate + Zod |
-| Composables | `@vueuse/core` |
-| Icons | Lucide Vue Next |
-| Testing | Vitest + Vue Testing Library + Playwright |
+| Forms        | VeeValidate + Zod                              |
+| Composables  | `@vueuse/core`                                 |
+| Icons        | Lucide Vue Next                                |
+| Testing      | Vitest + Vue Testing Library + Playwright      |
 
 ---
 
@@ -126,32 +126,32 @@ src/
 
 ### Folder Rules
 
-| Folder | Purpose | Rule |
-|--------|---------|------|
-| `api/` | HTTP calls | All requests go here, nowhere else |
-| `components/` | Reusable UI | No business logic |
-| `features/` | Feature modules | Self-contained, co-located |
-| `composables/` | Global composables | Shared across features |
-| `stores/` | Global state | Pinia only |
-| `services/` | Business logic | Non-UI logic |
-| `lib/` | Utilities | Pure functions only |
-| `views/` | Page components | One per route |
+| Folder         | Purpose            | Rule                               |
+| -------------- | ------------------ | ---------------------------------- |
+| `api/`         | HTTP calls         | All requests go here, nowhere else |
+| `components/`  | Reusable UI        | No business logic                  |
+| `features/`    | Feature modules    | Self-contained, co-located         |
+| `composables/` | Global composables | Shared across features             |
+| `stores/`      | Global state       | Pinia only                         |
+| `services/`    | Business logic     | Non-UI logic                       |
+| `lib/`         | Utilities          | Pure functions only                |
+| `views/`       | Page components    | One per route                      |
 
 ### Folder Decision Guide
 
-| Question | Folder |
-|----------|--------|
-| Makes HTTP calls? | `api/` |
-| Reused across features? | `components/` |
-| Belongs to one feature? | `features/[name]/components/` |
-| Global state? | `stores/` |
-| Feature-specific state? | `features/[name]/stores/` |
-| Shared composable? | `composables/` |
-| Feature-specific composable? | `features/[name]/composables/` |
-| Pure utility function? | `lib/` |
-| Business logic (non-UI)? | `services/` |
-| TypeScript types? | `types/` or `features/[name]/types/` |
-| Page-level component? | `views/` |
+| Question                     | Folder                               |
+| ---------------------------- | ------------------------------------ |
+| Makes HTTP calls?            | `api/`                               |
+| Reused across features?      | `components/`                        |
+| Belongs to one feature?      | `features/[name]/components/`        |
+| Global state?                | `stores/`                            |
+| Feature-specific state?      | `features/[name]/stores/`            |
+| Shared composable?           | `composables/`                       |
+| Feature-specific composable? | `features/[name]/composables/`       |
+| Pure utility function?       | `lib/`                               |
+| Business logic (non-UI)?     | `services/`                          |
+| TypeScript types?            | `types/` or `features/[name]/types/` |
+| Page-level component?        | `views/`                             |
 
 ### Import Rules
 
@@ -168,16 +168,16 @@ src/
 
 Apply all rules in `.claude/rules/`:
 
-| Rule | Key Requirement |
-|------|----------------|
-| `clean-code.md` | Single responsibility, no side effects, meaningful names |
-| `code-style.md` | TypeScript strict, camelCase, 2-space indent |
-| `vue-patterns.md` | `<script setup>`, composables, Pinia setup store, TanStack Query |
-| `error-handling.md` | Loading/error states on all async operations |
-| `security.md` | Sanitize `v-html`, HTTPS only, token storage |
-| `testing.md` | Vitest + Vue Testing Library, coverage ≥ 80% |
-| `api-conventions.md` | Consume REST + ApiResponse envelope |
-| `naming-conventions.md` | Component PascalCase, composable useXxx, store useXxxStore |
+| Rule                    | Key Requirement                                                  |
+| ----------------------- | ---------------------------------------------------------------- |
+| `clean-code.md`         | Single responsibility, no side effects, meaningful names         |
+| `code-style.md`         | TypeScript strict, camelCase, 2-space indent                     |
+| `vue-patterns.md`       | `<script setup>`, composables, Pinia setup store, TanStack Query |
+| `error-handling.md`     | Loading/error states on all async operations                     |
+| `security.md`           | Sanitize `v-html`, HTTPS only, token storage                     |
+| `testing.md`            | Vitest + Vue Testing Library, coverage ≥ 80%                     |
+| `api-conventions.md`    | Consume REST + ApiResponse envelope                              |
+| `naming-conventions.md` | Component PascalCase, composable useXxx, store useXxxStore       |
 
 ---
 
@@ -219,11 +219,11 @@ Stop and reconsider if you're:
 
 ## Collaboration
 
-| Works With | Handoff |
-|------------|---------|
-| UI/UX Designer | Receives design specs, tokens, wireframes |
-| Backend Developer | Consumes OpenAPI contract |
-| QA Engineer | Provides testable components and interactions |
+| Works With        | Handoff                                       |
+| ----------------- | --------------------------------------------- |
+| UI/UX Designer    | Receives design specs, tokens, wireframes     |
+| Backend Developer | Consumes OpenAPI contract                     |
+| QA Engineer       | Provides testable components and interactions |
 
 ---
 

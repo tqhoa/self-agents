@@ -137,22 +137,22 @@ This repository provides a **production-grade configuration** for Claude Code AI
 
 ## Approved Tech Stack
 
-| Layer                | Technology                              |
-| -------------------- | --------------------------------------- |
-| **Frontend (SEO)**   | Next.js 14 (App Router)                 |
-| **Frontend (Admin)** | VueJS + Vite                            |
-| **Styling**          | Tailwind CSS + shadcn/ui                |
-| **State**            | Zustand + TanStack Query                |
-| **Backend**          | Python + FastAPI                        |
-| **ORM**              | Prisma                                  |
-| **Database**         | PostgreSQL                              |
-| **Cache**            | Redis (ioredis)                         |
-| **Queue**            | BullMQ (simple) / RabbitMQ (enterprise) |
-| **Auth**             | JWT + bcrypt                            |
-| **Testing**          | Vitest + Playwright                     |
-| **Monitoring**       | Prometheus + Grafana + loki             |
-| **CI/CD**            | GitHub Actions                          |
-| **Deploy**           | Vercel + Railway/Fly.io                 |
+| Layer                | Technology                                      |
+| -------------------- | ----------------------------------------------- |
+| **Frontend (SEO)**   | Next.js 14 (App Router)                         |
+| **Frontend (Admin)** | VueJS + Vite                                    |
+| **Styling**          | Tailwind CSS + shadcn/ui                        |
+| **State**            | Zustand + TanStack Query                        |
+| **Backend**          | Python + FastAPI                                |
+| **ORM**              | SQLAlchemy 2.0 async + Alembic                  |
+| **Database**         | PostgreSQL                                      |
+| **Cache**            | Redis (ioredis)                                 |
+| **Queue**            | Celery + Redis (simple) / RabbitMQ (enterprise) |
+| **Auth**             | JWT + bcrypt                                    |
+| **Testing**          | Vitest + Playwright                             |
+| **Monitoring**       | Prometheus + Grafana + loki                     |
+| **CI/CD**            | GitHub Actions                                  |
+| **Deploy**           | Vercel + Railway/Fly.io                         |
 
 ---
 

@@ -19,19 +19,19 @@ Build for reliability first. Security is never optional. Handle failures gracefu
 
 ## Tech Stack
 
-| Layer | Choice |
-|-------|--------|
-| Runtime | Python 3.12+ |
-| Framework | FastAPI |
-| Validation | Pydantic v2 |
-| ORM | SQLAlchemy 2.0 async + Alembic |
-| Database | PostgreSQL 16 |
-| Cache | Redis (redis-py async) |
-| Queue | Celery + Redis (simple) / RabbitMQ (enterprise) |
-| Auth | JWT — access 15m + refresh 7d, bcrypt 12 rounds |
-| Logging | structlog (structured JSON) |
-| Testing | pytest + httpx async |
-| Docs | FastAPI auto-generates OpenAPI / Swagger UI |
+| Layer      | Choice                                          |
+| ---------- | ----------------------------------------------- |
+| Runtime    | Python 3.12+                                    |
+| Framework  | FastAPI                                         |
+| Validation | Pydantic v2                                     |
+| ORM        | SQLAlchemy 2.0 async + Alembic                  |
+| Database   | PostgreSQL 16                                   |
+| Cache      | Redis (redis-py async)                          |
+| Queue      | Celery + Redis (simple) / RabbitMQ (enterprise) |
+| Auth       | JWT — access 15m + refresh 7d, bcrypt 12 rounds |
+| Logging    | structlog (structured JSON)                     |
+| Testing    | pytest + httpx async                            |
+| Docs       | FastAPI auto-generates OpenAPI / Swagger UI     |
 
 ---
 
@@ -111,13 +111,13 @@ Request → Router → Dependency → Endpoint → Service → Repository → Da
                (auth, validation, rate-limit)
 ```
 
-| Layer | Folder | Responsibility |
-|-------|--------|---------------|
-| Presentation | `api/` | HTTP handling only |
-| Business | `domain/` | Business rules, orchestration |
-| Infrastructure | `infrastructure/` | DB, cache, queue, storage |
-| Schemas | `schemas/` | Pydantic request/response models |
-| Shared | `shared/` | Config, exceptions, helpers |
+| Layer          | Folder            | Responsibility                   |
+| -------------- | ----------------- | -------------------------------- |
+| Presentation   | `api/`            | HTTP handling only               |
+| Business       | `domain/`         | Business rules, orchestration    |
+| Infrastructure | `infrastructure/` | DB, cache, queue, storage        |
+| Schemas        | `schemas/`        | Pydantic request/response models |
+| Shared         | `shared/`         | Config, exceptions, helpers      |
 
 ### Import Direction (never reverse)
 
@@ -128,15 +128,15 @@ all layers → shared/
 
 ### Folder Decision
 
-| Question | Answer → Folder |
-|----------|----------------|
-| Handles HTTP request/response? | `api/v1/` |
-| Contains business rules? | `domain/services/` |
-| Talks to database? | `domain/repositories/` |
-| Connects to external service? | `infrastructure/` |
-| Used everywhere? | `shared/` |
-| Runs on schedule? | `jobs/` |
-| Processes async work? | `infrastructure/queue/` |
+| Question                       | Answer → Folder         |
+| ------------------------------ | ----------------------- |
+| Handles HTTP request/response? | `api/v1/`               |
+| Contains business rules?       | `domain/services/`      |
+| Talks to database?             | `domain/repositories/`  |
+| Connects to external service?  | `infrastructure/`       |
+| Used everywhere?               | `shared/`               |
+| Runs on schedule?              | `jobs/`                 |
+| Processes async work?          | `infrastructure/queue/` |
 
 ---
 
@@ -144,17 +144,17 @@ all layers → shared/
 
 Apply all rules in `.claude/rules/`:
 
-| Rule | Key Requirement |
-|------|----------------|
-| `clean-code.md` | Python section — single responsibility, no side effects |
-| `code-style.md` | Black + Ruff + mypy, snake_case, type hints everywhere |
-| `error-handling.md` | AppError class, FastAPI exception handlers |
-| `database.md` | SQLAlchemy 2.0 async, Alembic migrations, no raw SQL |
-| `security.md` | JWT auth, bcrypt 12 rounds, rate limiting, Pydantic validation |
-| `testing.md` | pytest + httpx async, coverage ≥ 80% |
-| `api-conventions.md` | REST standards, ApiResponse envelope |
-| `naming-conventions.md` | Cache keys, DB columns, queue names |
-| `monitoring.md` | structlog JSON, Prometheus metrics |
+| Rule                    | Key Requirement                                                |
+| ----------------------- | -------------------------------------------------------------- |
+| `clean-code.md`         | Python section — single responsibility, no side effects        |
+| `code-style.md`         | Black + Ruff + mypy, snake_case, type hints everywhere         |
+| `error-handling.md`     | AppError class, FastAPI exception handlers                     |
+| `database.md`           | SQLAlchemy 2.0 async, Alembic migrations, no raw SQL           |
+| `security.md`           | JWT auth, bcrypt 12 rounds, rate limiting, Pydantic validation |
+| `testing.md`            | pytest + httpx async, coverage ≥ 80%                           |
+| `api-conventions.md`    | REST standards, ApiResponse envelope                           |
+| `naming-conventions.md` | Cache keys, DB columns, queue names                            |
+| `monitoring.md`         | structlog JSON, Prometheus metrics                             |
 
 ---
 
@@ -198,12 +198,12 @@ Stop and reconsider if you're:
 
 ## Collaboration
 
-| Works With | Handoff |
-|------------|---------|
-| Systems Architect | Receives architecture decisions and ADRs |
-| Frontend Developer | Provides OpenAPI JSON contract |
-| QA Engineer | Provides testable endpoints and test fixtures |
-| Security Auditor | Receives security review findings |
+| Works With         | Handoff                                       |
+| ------------------ | --------------------------------------------- |
+| Systems Architect  | Receives architecture decisions and ADRs      |
+| Frontend Developer | Provides OpenAPI JSON contract                |
+| QA Engineer        | Provides testable endpoints and test fixtures |
+| Security Auditor   | Receives security review findings             |
 
 ---
 

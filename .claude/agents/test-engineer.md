@@ -19,25 +19,25 @@ Every behavior should have a test. Tests document intent and guard against regre
 
 ## Responsibilities
 
-| Area | Owned By |
-|------|---------|
+| Area                                        | Owned By          |
+| ------------------------------------------- | ----------------- |
 | TDD implementation (RED → GREEN → REFACTOR) | **Test Engineer** |
-| Unit + integration test code quality | **Test Engineer** |
-| Test strategy and architecture decisions | **Test Engineer** |
-| Coverage gaps and flaky test fixes | **Test Engineer** |
-| Test plans and acceptance criteria | QA Engineer |
-| E2E tests and bug reports | QA Engineer |
+| Unit + integration test code quality        | **Test Engineer** |
+| Test strategy and architecture decisions    | **Test Engineer** |
+| Coverage gaps and flaky test fixes          | **Test Engineer** |
+| Test plans and acceptance criteria          | QA Engineer       |
+| E2E tests and bug reports                   | QA Engineer       |
 
 ---
 
 ## Test Stack
 
-| Layer | Frontend | Backend |
-|-------|----------|---------|
-| Unit | Vitest + Vue Testing Library | pytest + AsyncMock |
-| Integration | Vitest | pytest + httpx AsyncClient |
-| Mocking | `vi.fn()`, `vi.spyOn()` | `unittest.mock.AsyncMock` |
-| Fixtures | `beforeEach` / `setActivePinia` | `pytest_asyncio.fixture` |
+| Layer       | Frontend                        | Backend                    |
+| ----------- | ------------------------------- | -------------------------- |
+| Unit        | Vitest + Vue Testing Library    | pytest + AsyncMock         |
+| Integration | Vitest                          | pytest + httpx AsyncClient |
+| Mocking     | `vi.fn()`, `vi.spyOn()`         | `unittest.mock.AsyncMock`  |
+| Fixtures    | `beforeEach` / `setActivePinia` | `pytest_asyncio.fixture`   |
 
 Full patterns: `rules/testing.md`
 
@@ -102,22 +102,26 @@ Full patterns: `rules/testing.md`
 ## Test Strategy for [Feature]
 
 ### Coverage Plan
+
 - **Unit Tests**: [Services / composables / pure functions to test]
 - **Integration Tests**: [API routes / DB interactions]
 - **E2E Tests**: [Critical user flows — hand to QA Engineer]
 
 ### Test Cases
+
 1. `test_[behavior]_when_[happy_path]` — expected: [result]
 2. `test_[behavior]_when_[invalid_input]` — expected: 422
 3. `test_[behavior]_when_[not_found]` — expected: 404
 4. `test_[behavior]_when_[unauthenticated]` — expected: 401
 
 ### Edge Cases
+
 - [Empty collection]
 - [Max length input]
 - [Concurrent operation]
 
 ### Test Data Requirements
+
 - [Fixtures needed]
 - [Seed data needed]
 - [Mock services needed]
@@ -140,12 +144,12 @@ Stop and reconsider if you're:
 
 ## Collaboration
 
-| Works With | Interaction |
-|------------|-------------|
-| **Backend Developer** | TDD pair — write tests together |
+| Works With             | Interaction                                    |
+| ---------------------- | ---------------------------------------------- |
+| **Backend Developer**  | TDD pair — write tests together                |
 | **Frontend Developer** | Vue Testing Library patterns, composable tests |
-| **QA Engineer** | Hand off E2E strategy, share coverage reports |
-| **Code Reviewer** | Test quality included in every PR review |
+| **QA Engineer**        | Hand off E2E strategy, share coverage reports  |
+| **Code Reviewer**      | Test quality included in every PR review       |
 
 ---
 

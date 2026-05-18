@@ -125,13 +125,13 @@ git push origin feature/add-user-auth
 
 ### 2.1 Branch Strategy
 
-| Branch | Purpose | Protection |
-|--------|---------|------------|
-| `main` | Production code | Full protection |
-| `dev` | Integration branch | PR required |
-| `feature/*` | New features | None |
-| `fix/*` | Bug fixes | None |
-| `hotfix/*` | Urgent fixes | Direct to main via PR |
+| Branch      | Purpose            | Protection            |
+| ----------- | ------------------ | --------------------- |
+| `main`      | Production code    | Full protection       |
+| `dev`       | Integration branch | PR required           |
+| `feature/*` | New features       | None                  |
+| `fix/*`     | Bug fixes          | None                  |
+| `hotfix/*`  | Urgent fixes       | Direct to main via PR |
 
 ### 2.2 Branch Protection Rules (main)
 
@@ -139,13 +139,13 @@ git push origin feature/add-user-auth
 # Settings → Branches → Branch protection rules
 
 ✅ Require a pull request before merging
-  ✅ Require approvals (1+)
-  ✅ Dismiss stale pull request approvals when new commits are pushed
+✅ Require approvals (1+)
+✅ Dismiss stale pull request approvals when new commits are pushed
 
 ✅ Require status checks to pass before merging
-  ✅ Require branches to be up to date before merging
-  - test-backend (required)
-  - test-frontend (required)
+✅ Require branches to be up to date before merging
+- test-backend (required)
+- test-frontend (required)
 
 ✅ Do not allow force pushes
 
@@ -188,8 +188,8 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: "3.12"
+          cache: "pip"
           cache-dependency-path: backend/requirements.txt
 
       - name: Install dependencies
@@ -219,8 +219,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
@@ -295,8 +295,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: "3.12"
+          cache: "pip"
           cache-dependency-path: backend/requirements.txt
       - run: pip install -r requirements.txt
         working-directory: backend
@@ -312,8 +312,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
         working-directory: frontend
@@ -469,10 +469,10 @@ ghcr.io/myorg/myproject/myapp-worker:v1.2.0
 
 ### Image Tags
 
-| Tag | Description |
-|-----|-------------|
+| Tag      | Description                  |
+| -------- | ---------------------------- |
 | `v1.2.0` | Specific version (immutable) |
-| `latest` | Latest stable release |
+| `latest` | Latest stable release        |
 
 ### Manual Rollback (30 seconds)
 
@@ -612,10 +612,10 @@ server {
 
 ### 4.4 Port Mapping
 
-| Domain | Internal Port | Service |
-|--------|---------------|---------|
-| api.example.com | :8000 | FastAPI Backend |
-| app.example.com | :3000 | Vue Frontend |
+| Domain          | Internal Port | Service         |
+| --------------- | ------------- | --------------- |
+| api.example.com | :8000         | FastAPI Backend |
+| app.example.com | :3000         | Vue Frontend    |
 
 ---
 
@@ -628,6 +628,7 @@ curl https://api.example.com/health
 ```
 
 Expected response:
+
 ```json
 {
   "status": "healthy",

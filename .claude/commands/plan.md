@@ -56,16 +56,19 @@ Each task must include:
 **Objective**: [What this achieves end-to-end]
 
 **Files to modify**:
+
 - `domain/repositories/task_repository.py`
 - `api/v1/tasks.py`
 - `features/tasks/components/TaskList.vue`
 
 **Test first** (TDD):
+
 - Write failing test in `tests/unit/` or `tests/integration/`
 - Implement until test passes
 - Refactor
 
 **Acceptance Criteria**:
+
 - [ ] User can [action]
 - [ ] [Validation] is enforced
 - [ ] Unit/integration test covers [scenario]
@@ -77,6 +80,7 @@ Each task must include:
 ### Phase 4: Ordering
 
 Order tasks by:
+
 1. **Foundation first** — DB models/migrations, Pydantic schemas, shared utilities
 2. **Risk-first** — Tackle uncertain/complex items early
 3. **Dependencies** — Respect the dependency graph
@@ -111,18 +115,21 @@ Save to `docs/plans/[feature-name].md`:
 **Layer**: Backend / Frontend / Full-stack
 
 ## Phase 1: Foundation
+
 - [ ] Task 1.1: [Description] — `[files affected]`
 - [ ] Task 1.2: [Description] — `[files affected]`
 
 ## Checkpoint: Foundation Complete
 
 ## Phase 2: Core Features
+
 - [ ] Task 2.1: [Description] — `[files affected]`
 - [ ] Task 2.2: [Description] — `[files affected]`
 
 ## Checkpoint: Core Complete
 
 ## Phase 3: Polish & Tests
+
 - [ ] Task 3.1: [Description]
 - [ ] Task 3.2: Coverage audit — ensure ≥ 80%
 ```

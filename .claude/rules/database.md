@@ -1,23 +1,27 @@
 # Database Rules
 
 ## General Rules
+
 - **Never** write raw SQL strings directly in business logic
 - Always use an ORM or query builder
 - All database calls must be inside try/catch (JS) or try/except (Python) blocks
 - Use **transactions** for multi-step operations
 
 ## Naming Conventions
+
 - Tables: **snake_case** plural (`user_profiles`, `order_items`)
 - Columns: **snake_case** (`created_at`, `user_id`)
 - Indexes: `idx_[table]_[column]`
 - Foreign keys: `fk_[child_table]_[parent_table]`
 
 ## Migrations
+
 - Always use migration files — never modify schema directly
 - Migration files are version-controlled and immutable
 - Run migrations in CI/CD before deploying
 
 ## Security
+
 - Never log query results containing sensitive data (passwords, tokens)
 - Use parameterized queries — never string concatenation
 - Apply row-level security where applicable
@@ -27,47 +31,51 @@
 ## JavaScript / Prisma + node-postgres
 
 ### Connection Management (node-postgres / pg)
+
 ```js
 // ✅ Use connection pooling (node-postgres)
-import { Pool } from 'pg';
+import { Pool } from "pg";
 const pool = new Pool({ max: 10, idleTimeoutMillis: 30000 });
 
 // ❌ Never create a new connection per request
 ```
 
 ### Prisma Client Singleton
+
 ```js
 // src/lib/db.js — reuse one PrismaClient instance
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 const globalForPrisma = globalThis;
 export const db = globalForPrisma.prisma ?? new PrismaClient();
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db;
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
 ```
 
 ### Query Best Practices
+
 ```js
 // ✅ Select only needed fields
 const user = await db.user.findUnique({
   where: { id },
-  select: { id: true, email: true, name: true }
+  select: { id: true, email: true, name: true },
 });
 
 // ✅ Use pagination for lists
 const users = await db.user.findMany({
   take: limit,
   skip: (page - 1) * limit,
-  orderBy: { createdAt: 'desc' }
+  orderBy: { createdAt: "desc" },
 });
 ```
 
 ### Transactions (Prisma)
+
 ```js
 // ✅ Atomic operations
 await db.$transaction(async (tx) => {
   const order = await tx.order.create({ data: orderData });
   await tx.inventory.update({
     where: { id: productId },
-    data: { stock: { decrement: 1 } }
+    data: { stock: { decrement: 1 } },
   });
   return order;
 });
@@ -78,6 +86,7 @@ await db.$transaction(async (tx) => {
 ## Python / SQLAlchemy 2.0 async
 
 ### Model Definition
+
 ```python
 # infrastructure/database/models/user.py
 import uuid
@@ -105,6 +114,7 @@ class UserModel(Base):
 ```
 
 ### Session Factory
+
 ```python
 # infrastructure/database/session.py
 from collections.abc import AsyncGenerator
@@ -123,6 +133,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 ```
 
 ### Query Best Practices
+
 ```python
 # ✅ Select specific columns
 from sqlalchemy import select
@@ -150,6 +161,7 @@ result = await db.execute(
 ```
 
 ### Transactions (SQLAlchemy)
+
 ```python
 # ✅ Atomic operations — db is AsyncSession from get_db()
 async with session.begin():
@@ -164,6 +176,7 @@ async with session.begin():
 ```
 
 ### Alembic Migrations
+
 ```bash
 # Create migration
 alembic revision --autogenerate -m "add_users_table"

@@ -4,32 +4,34 @@
 
 ## 🔭 The Three Pillars of Observability
 
-| Pillar | JS/TS Tool | Python Tool | Purpose |
-|--------|-----------|-------------|---------|
-| **Logs** | Pino + Loki | structlog + Loki | What happened |
-| **Metrics** | prom-client + Grafana | prometheus-client + Grafana | How the system is behaving |
-| **Traces** | OpenTelemetry + Jaeger | OpenTelemetry + Jaeger | Why something is slow |
+| Pillar      | JS/TS Tool             | Python Tool                 | Purpose                    |
+| ----------- | ---------------------- | --------------------------- | -------------------------- |
+| **Logs**    | Pino + Loki            | structlog + Loki            | What happened              |
+| **Metrics** | prom-client + Grafana  | prometheus-client + Grafana | How the system is behaving |
+| **Traces**  | OpenTelemetry + Jaeger | OpenTelemetry + Jaeger      | Why something is slow      |
 
 ---
 
 ## 📝 Logging Rules
 
 ### Log Levels
-| Level | When to Use |
-|-------|-------------|
-| `error` | Unexpected failure requiring attention |
-| `warn` | Unexpected but recoverable situation |
-| `info` | Normal significant events (startup, request lifecycle) |
-| `debug` | Detailed debugging info (dev only) |
-| `trace` | Very verbose (never in production) |
+
+| Level   | When to Use                                            |
+| ------- | ------------------------------------------------------ |
+| `error` | Unexpected failure requiring attention                 |
+| `warn`  | Unexpected but recoverable situation                   |
+| `info`  | Normal significant events (startup, request lifecycle) |
+| `debug` | Detailed debugging info (dev only)                     |
+| `trace` | Very verbose (never in production)                     |
 
 ### Log Format — Structured JSON (always!)
 
 **JavaScript:**
+
 ```js
 // ✅ Structured log — searchable and parseable
 logger.info({
-  event: 'order.placed',
+  event: "order.placed",
   orderId: order.id,
   userId: user.id,
   amount: order.total,
@@ -42,6 +44,7 @@ console.log(`Order ${orderId} placed by user ${userId}`);
 ```
 
 **Python:**
+
 ```python
 # ✅ structlog — structured, bound context
 import structlog
@@ -62,6 +65,7 @@ print(f"Order {order_id} placed by user {user_id}")
 ```
 
 ### Mandatory Fields
+
 ```json
 {
   "level": "info",
@@ -77,6 +81,7 @@ print(f"Order {order_id} placed by user {user_id}")
 ```
 
 ### What NOT to Log
+
 ```
 ❌ Never log: passwords, tokens, credit card numbers, SSNs, PII
 ```
@@ -84,12 +89,13 @@ print(f"Order {order_id} placed by user {user_id}")
 ### Logger Setup
 
 **JavaScript (Pino):**
+
 ```js
 // src/utils/logger.js
-import pino from 'pino';
+import pino from "pino";
 
 export const logger = pino({
-  level: process.env.LOG_LEVEL || 'info',
+  level: process.env.LOG_LEVEL || "info",
   base: {
     service: process.env.APP_NAME,
     version: process.env.npm_package_version,
@@ -100,6 +106,7 @@ export const logger = pino({
 ```
 
 **Python (structlog):**
+
 ```python
 # shared/utils/logger.py
 import logging
@@ -124,6 +131,7 @@ logger = structlog.get_logger().bind(
 ```
 
 **FastAPI request logging middleware:**
+
 ```python
 # api/middleware/logging.py
 import time
@@ -158,14 +166,16 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
 ## 📊 Metrics (Prometheus + Grafana)
 
 ### Metric Types
-| Type | Use Case | Example |
-|------|----------|---------|
-| **Counter** | Values that only increase | `http_requests_total` |
-| **Gauge** | Values that go up and down | `active_connections`, `memory_usage_bytes` |
-| **Histogram** | Distribution of values | `http_request_duration_seconds` |
-| **Summary** | Pre-calculated percentiles | `request_latency_percentiles` |
+
+| Type          | Use Case                   | Example                                    |
+| ------------- | -------------------------- | ------------------------------------------ |
+| **Counter**   | Values that only increase  | `http_requests_total`                      |
+| **Gauge**     | Values that go up and down | `active_connections`, `memory_usage_bytes` |
+| **Histogram** | Distribution of values     | `http_request_duration_seconds`            |
+| **Summary**   | Pre-calculated percentiles | `request_latency_percentiles`              |
 
 ### Naming Convention
+
 ```
 # Pattern: {namespace}_{subsystem}_{name}_{unit}
 # All lowercase, underscores, snake_case
@@ -191,32 +201,38 @@ payment_transactions_total            # counter (+ status label)
 ### Metrics Setup
 
 **JavaScript (prom-client + Express):**
+
 ```js
 // middleware/metrics.js
-import client from 'prom-client';
+import client from "prom-client";
 
 const httpDuration = new client.Histogram({
-  name: 'http_request_duration_seconds',
-  help: 'Duration of HTTP requests in seconds',
-  labelNames: ['method', 'route', 'status_code'],
+  name: "http_request_duration_seconds",
+  help: "Duration of HTTP requests in seconds",
+  labelNames: ["method", "route", "status_code"],
   buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
 });
 
 export function metricsMiddleware(req, res, next) {
   const end = httpDuration.startTimer();
-  res.on('finish', () => {
-    end({ method: req.method, route: req.route?.path || req.path, status_code: res.statusCode });
+  res.on("finish", () => {
+    end({
+      method: req.method,
+      route: req.route?.path || req.path,
+      status_code: res.statusCode,
+    });
   });
   next();
 }
 
-app.get('/metrics', async (req, res) => {
-  res.set('Content-Type', client.register.contentType);
+app.get("/metrics", async (req, res) => {
+  res.set("Content-Type", client.register.contentType);
   res.end(await client.register.metrics());
 });
 ```
 
 **Python (prometheus-client + FastAPI):**
+
 ```python
 # shared/metrics.py
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
@@ -266,6 +282,7 @@ async def metrics():
 ## 📈 Grafana Dashboard Design
 
 ### Dashboard Naming
+
 ```
 # Pattern: {Service} — {Category}
 User Service — Overview
@@ -276,6 +293,7 @@ Infrastructure — PostgreSQL
 ```
 
 ### Panel Naming
+
 ```
 # Use title case, include units in title
 Request Rate (req/s)
@@ -288,7 +306,9 @@ Memory Usage (MB)
 ```
 
 ### The RED Method (for Services)
+
 Every service dashboard MUST have these 3 panels:
+
 - **R** — **Rate**: requests per second
 - **E** — **Errors**: error rate (%)
 - **D** — **Duration**: P50, P95, P99 latency
@@ -308,12 +328,15 @@ histogram_quantile(0.99,
 ```
 
 ### The USE Method (for Infrastructure)
+
 Every infrastructure dashboard MUST have:
+
 - **U** — **Utilization**: % of resource being used
 - **S** — **Saturation**: queue depth, wait time
 - **E** — **Errors**: error count/rate
 
 ### Standard Dashboard Layout
+
 ```
 Row 1: Summary / Health Overview (traffic lights)
 Row 2: RED metrics (Rate, Errors, Duration)
@@ -327,13 +350,15 @@ Row 5: Logs panel (Loki integration)
 ## 🚨 Alerting Rules
 
 ### Severity Levels
-| Level | Response Time | Example |
-|-------|--------------|---------|
+
+| Level      | Response Time         | Example                        |
+| ---------- | --------------------- | ------------------------------ |
 | `critical` | Immediate (PagerDuty) | Service down, payment failures |
-| `warning` | Within 30min (Slack) | High error rate, slow queries |
-| `info` | Business hours | Unusual traffic patterns |
+| `warning`  | Within 30min (Slack)  | High error rate, slow queries  |
+| `info`     | Business hours        | Unusual traffic patterns       |
 
 ### Standard Alert Rules (Prometheus AlertManager)
+
 ```yaml
 groups:
   - name: service-alerts
@@ -381,11 +406,12 @@ groups:
 ## 🔍 Distributed Tracing (OpenTelemetry)
 
 **JavaScript:**
+
 ```js
 // src/tracing.js
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+import { JaegerExporter } from "@opentelemetry/exporter-jaeger";
 
 const sdk = new NodeSDK({
   traceExporter: new JaegerExporter({ endpoint: process.env.JAEGER_ENDPOINT }),
@@ -397,6 +423,7 @@ sdk.start();
 ```
 
 **Python:**
+
 ```python
 # shared/tracing.py
 from opentelemetry import trace
@@ -418,6 +445,7 @@ def setup_tracing(app) -> None:
 ```
 
 ### Span Naming
+
 ```
 # HTTP: {method} {route}
 GET /api/v1/users/{id}

@@ -17,8 +17,9 @@
 ## Test Structure (AAA)
 
 **JavaScript (Vitest):**
+
 ```javascript
-it('should return 10% discount when order over $100', () => {
+it("should return 10% discount when order over $100", () => {
   // Arrange
   const amount = 150;
 
@@ -31,6 +32,7 @@ it('should return 10% discount when order over $100', () => {
 ```
 
 **Python (pytest):**
+
 ```python
 def test_calculate_discount_returns_10_percent_when_order_over_100():
     # Arrange
@@ -46,23 +48,25 @@ def test_calculate_discount_returns_10_percent_when_order_over_100():
 ## Unit Test Examples
 
 **JavaScript:**
+
 ```javascript
-describe('calculateDiscount', () => {
-  it('should return 10% for orders over $100', () => {
+describe("calculateDiscount", () => {
+  it("should return 10% for orders over $100", () => {
     expect(calculateDiscount(150)).toBe(15);
   });
 
-  it('should return 0 for orders under $100', () => {
+  it("should return 0 for orders under $100", () => {
     expect(calculateDiscount(50)).toBe(0);
   });
 
-  it('should return 0 at exactly $100', () => {
+  it("should return 0 at exactly $100", () => {
     expect(calculateDiscount(100)).toBe(0);
   });
 });
 ```
 
 **Python:**
+
 ```python
 def test_calculate_discount_returns_15_for_150():
     assert calculate_discount(150) == 15
@@ -77,21 +81,23 @@ def test_calculate_discount_returns_0_at_boundary_100():
 ## Integration Test Examples
 
 **JavaScript (supertest):**
+
 ```javascript
-describe('POST /api/v1/users', () => {
-  it('should create user and return 201', async () => {
+describe("POST /api/v1/users", () => {
+  it("should create user and return 201", async () => {
     const response = await request(app)
-      .post('/api/v1/users')
-      .send({ email: 'test@example.com', name: 'Test' })
-      .set('Authorization', `Bearer ${token}`);
+      .post("/api/v1/users")
+      .send({ email: "test@example.com", name: "Test" })
+      .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(201);
-    expect(response.body.data.email).toBe('test@example.com');
+    expect(response.body.data.email).toBe("test@example.com");
   });
 });
 ```
 
 **Python (pytest + httpx):**
+
 ```python
 @pytest.mark.asyncio
 async def test_create_user_returns_201(client: AsyncClient, auth_headers: dict):
@@ -107,48 +113,50 @@ async def test_create_user_returns_201(client: AsyncClient, auth_headers: dict):
 ## E2E Test Example (Playwright)
 
 ```javascript
-test('user can complete checkout flow', async ({ page }) => {
-  await page.goto('/login');
-  await page.fill('[name="email"]', 'user@example.com');
-  await page.fill('[name="password"]', 'password');
+test("user can complete checkout flow", async ({ page }) => {
+  await page.goto("/login");
+  await page.fill('[name="email"]', "user@example.com");
+  await page.fill('[name="password"]', "password");
   await page.click('button[type="submit"]');
 
-  await page.goto('/products/1');
+  await page.goto("/products/1");
   await page.click('button:has-text("Add to Cart")');
 
-  await page.goto('/checkout');
+  await page.goto("/checkout");
   await page.click('button:has-text("Pay")');
 
-  await expect(page.locator('.success-message')).toBeVisible();
+  await expect(page.locator(".success-message")).toBeVisible();
 });
 ```
 
 ## Vue Component Test
 
 ```typescript
-import { render, fireEvent } from '@testing-library/vue';
-import BaseButton from '@/components/ui/BaseButton.vue';
+import { render, fireEvent } from "@testing-library/vue";
+import BaseButton from "@/components/ui/BaseButton.vue";
 
-describe('BaseButton', () => {
-  it('renders slot content', () => {
-    const { getByText } = render(BaseButton, { slots: { default: 'Click me' } });
-    expect(getByText('Click me')).toBeInTheDocument();
+describe("BaseButton", () => {
+  it("renders slot content", () => {
+    const { getByText } = render(BaseButton, {
+      slots: { default: "Click me" },
+    });
+    expect(getByText("Click me")).toBeInTheDocument();
   });
 
-  it('emits click event when clicked', async () => {
+  it("emits click event when clicked", async () => {
     const { getByRole, emitted } = render(BaseButton, {
-      slots: { default: 'Click' },
+      slots: { default: "Click" },
     });
-    await fireEvent.click(getByRole('button'));
+    await fireEvent.click(getByRole("button"));
     expect(emitted().click).toHaveLength(1);
   });
 
-  it('is disabled when loading prop is true', () => {
+  it("is disabled when loading prop is true", () => {
     const { getByRole } = render(BaseButton, {
       props: { loading: true },
-      slots: { default: 'Loading' },
+      slots: { default: "Loading" },
     });
-    expect(getByRole('button')).toBeDisabled();
+    expect(getByRole("button")).toBeDisabled();
   });
 });
 ```
@@ -162,13 +170,18 @@ const db = createTestDatabase();
 // 2. Fake (in-memory)
 const fakeUserRepo = {
   users: [],
-  create(user) { this.users.push(user); return user; },
-  findById(id) { return this.users.find(u => u.id === id); }
+  create(user) {
+    this.users.push(user);
+    return user;
+  },
+  findById(id) {
+    return this.users.find((u) => u.id === id);
+  },
 };
 
 // 3. Stub (canned response)
 const stubbedApi = {
-  getUser: () => Promise.resolve({ id: '1', name: 'Test' })
+  getUser: () => Promise.resolve({ id: "1", name: "Test" }),
 };
 
 // 4. Mock (verify interactions — use sparingly)
@@ -203,23 +216,24 @@ mock_repo.find_by_id.assert_awaited_once_with("1")
 
 ## Anti-Patterns
 
-| Pattern | Problem | Fix |
-|---------|---------|-----|
-| Testing internals | Breaks on refactor | Test behavior |
-| Shared state | Tests affect each other | Reset in `beforeEach` / `autouse` fixture |
-| Flaky tests | Random failures | Deterministic data |
-| Over-mocking | False confidence | Real implementations |
-| No assertions | Test always passes | Assert outcomes |
-| Magic numbers | Hard to understand | Named constants |
+| Pattern           | Problem                 | Fix                                       |
+| ----------------- | ----------------------- | ----------------------------------------- |
+| Testing internals | Breaks on refactor      | Test behavior                             |
+| Shared state      | Tests affect each other | Reset in `beforeEach` / `autouse` fixture |
+| Flaky tests       | Random failures         | Deterministic data                        |
+| Over-mocking      | False confidence        | Real implementations                      |
+| No assertions     | Test always passes      | Assert outcomes                           |
+| Magic numbers     | Hard to understand      | Named constants                           |
 
 ## Coverage Configuration
 
 **JavaScript (vitest.config.ts):**
+
 ```typescript
 export default defineConfig({
   test: {
     coverage: {
-      provider: 'v8',
+      provider: "v8",
       thresholds: {
         lines: 80,
         branches: 80,
@@ -232,6 +246,7 @@ export default defineConfig({
 ```
 
 **Python (pyproject.toml):**
+
 ```toml
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

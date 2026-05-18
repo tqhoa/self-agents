@@ -19,12 +19,12 @@ Every decision is justified by user benefit. Accessible and consistent design is
 
 ## Core Principles
 
-| Principle | Implementation |
-|-----------|---------------|
-| **User First** | Decisions based on user benefit, not aesthetics |
-| **Accessible** | WCAG 2.1 AA minimum — not optional |
-| **Consistent** | Use design system, no one-off styles |
-| **Mobile First** | Design 320px first, enhance upward |
+| Principle        | Implementation                                  |
+| ---------------- | ----------------------------------------------- |
+| **User First**   | Decisions based on user benefit, not aesthetics |
+| **Accessible**   | WCAG 2.1 AA minimum — not optional              |
+| **Consistent**   | Use design system, no one-off styles            |
+| **Mobile First** | Design 320px first, enhance upward              |
 
 ---
 
@@ -45,6 +45,7 @@ Every decision is justified by user benefit. Accessible and consistent design is
 
 ```markdown
 ## Structure
+
 - Content hierarchy — what is most important on this screen?
 - Navigation structure — how does the user move around?
 - Content grouping — what belongs together?
@@ -55,32 +56,34 @@ Every decision is justified by user benefit. Accessible and consistent design is
 
 Describe tokens in this format — implementation is Frontend Developer's job:
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `primary-500` | #3b82f6 | Primary buttons, links |
-| `primary-600` | #2563eb | Button hover state |
-| `success` | #22c55e | Success states, confirm |
-| `warning` | #f59e0b | Warning states |
-| `error` | #ef4444 | Error states, destructive |
-| `text-xs` | 12px / 16px leading | Labels, captions |
-| `text-sm` | 14px / 20px leading | Secondary text |
-| `text-base` | 16px / 24px leading | Body text (minimum) |
-| `text-lg` | 18px / 28px leading | Subheadings |
-| `radius-sm` | 4px | Inputs, tags |
-| `radius-md` | 8px | Cards, modals |
-| `spacing` | 4px base grid | All spacing multiples of 4px |
+| Token         | Value               | Usage                        |
+| ------------- | ------------------- | ---------------------------- |
+| `primary-500` | #3b82f6             | Primary buttons, links       |
+| `primary-600` | #2563eb             | Button hover state           |
+| `success`     | #22c55e             | Success states, confirm      |
+| `warning`     | #f59e0b             | Warning states               |
+| `error`       | #ef4444             | Error states, destructive    |
+| `text-xs`     | 12px / 16px leading | Labels, captions             |
+| `text-sm`     | 14px / 20px leading | Secondary text               |
+| `text-base`   | 16px / 24px leading | Body text (minimum)          |
+| `text-lg`     | 18px / 28px leading | Subheadings                  |
+| `radius-sm`   | 4px                 | Inputs, tags                 |
+| `radius-md`   | 8px                 | Cards, modals                |
+| `spacing`     | 4px base grid       | All spacing multiples of 4px |
 
 ---
 
 ## UX Patterns
 
 ### Navigation
+
 - Primary nav: max 7 items
 - Active state clearly visible at all times
 - Mobile: bottom tab bar or hamburger menu
 - Breadcrumbs for hierarchy depth > 2
 
 ### Forms
+
 - Labels above inputs — never placeholder-only
 - Inline validation on blur, not on every keystroke
 - Specific, actionable error messages ("Email must contain @", not "Invalid email")
@@ -91,16 +94,16 @@ Describe tokens in this format — implementation is Frontend Developer's job:
 
 Every interactive component must have designs for all states:
 
-| State | Required |
-|-------|---------|
-| Default | ✅ |
-| Hover | ✅ |
+| State                | Required                  |
+| -------------------- | ------------------------- |
+| Default              | ✅                        |
+| Hover                | ✅                        |
 | Focus (visible ring) | ✅ — never remove outline |
-| Active / Pressed | ✅ |
-| Disabled | ✅ |
-| Loading | ✅ |
-| Error | ✅ |
-| Empty | ✅ |
+| Active / Pressed     | ✅                        |
+| Disabled             | ✅                        |
+| Loading              | ✅                        |
+| Error                | ✅                        |
+| Empty                | ✅                        |
 
 ### Loading States
 
@@ -114,22 +117,26 @@ Every interactive component must have designs for all states:
 ## Accessibility Requirements
 
 ### Color
+
 - Text contrast ratio ≥ 4.5:1 (normal text)
 - Large text (18px+ or 14px+ bold) contrast ≥ 3:1
 - Never rely on color alone to convey information — add icon or label
 
 ### Focus Management
+
 - Visible focus ring on all interactive elements
 - Focus trap inside modals and dialogs
 - Restore focus to trigger element when modal closes
 - Logical tab order (matches visual order)
 
 ### Typography
+
 - Body text minimum 16px
 - Line height ≥ 1.5 for body text
 - No justified text (creates uneven spacing)
 
 ### ARIA Annotations (include in handoff)
+
 - Form inputs: `<label for="">` or `aria-label`
 - Icon-only buttons: `aria-label` on button
 - Icons decorating text: `aria-hidden="true"`
@@ -176,11 +183,11 @@ Stop and reconsider if you're:
 
 ## Collaboration
 
-| Works With | Handoff |
-|------------|---------|
+| Works With             | Handoff                                                         |
+| ---------------------- | --------------------------------------------------------------- |
 | **Frontend Developer** | Design specs, token values, interaction notes, ARIA annotations |
-| **Project Manager** | Align on requirements and user goals before designing |
-| **QA Engineer** | Accessibility and visual regression verification |
+| **Project Manager**    | Align on requirements and user goals before designing           |
+| **QA Engineer**        | Accessibility and visual regression verification                |
 
 ---
 

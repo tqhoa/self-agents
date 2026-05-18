@@ -37,23 +37,25 @@ Tests reveal intent, expected behavior, and coverage gaps. Start here before rea
 
 Full checklist: `.claude/agents/code-reviewer.md` and `.claude/skills/code-review/SKILL.md`
 
-| Axis | Key Questions |
-|------|--------------|
-| **Correctness** | Does it do what it claims? Edge cases handled? Error paths covered? |
-| **Readability** | Can another engineer understand this without help? Names clear? |
+| Axis             | Key Questions                                                                |
+| ---------------- | ---------------------------------------------------------------------------- |
+| **Correctness**  | Does it do what it claims? Edge cases handled? Error paths covered?          |
+| **Readability**  | Can another engineer understand this without help? Names clear?              |
 | **Architecture** | Follows project patterns? Import direction correct? Abstraction appropriate? |
-| **Security** | Inputs validated? Auth enforced? No secrets? See `rules/security.md` |
-| **Performance** | N+1 queries? Unbounded operations? Missing indexes? |
+| **Security**     | Inputs validated? Auth enforced? No secrets? See `rules/security.md`         |
+| **Performance**  | N+1 queries? Unbounded operations? Missing indexes?                          |
 
 ### Step 4: Check Project-Specific Rules
 
 **Backend (Python / FastAPI):**
+
 - [ ] `rules/error-handling.md` — AppError, no bare `except`, `details` key for validation errors
 - [ ] `rules/database.md` — SQLAlchemy ORM only, `expire_on_commit=False`, `session.begin()`
 - [ ] `rules/security.md` — Pydantic on all inputs, auth dependency on protected routes
 - [ ] `rules/testing.md` — async generator DI override, normal constructor in fixtures
 
 **Frontend (Vue 3 / TypeScript):**
+
 - [ ] `rules/vue-patterns.md` — `<script setup>`, store at top of setup, `onUnmounted` cleanup
 - [ ] `rules/security.md` — no raw `v-html`, no secrets committed
 - [ ] `rules/testing.md` — `emitted()` for events, `setActivePinia` in store tests

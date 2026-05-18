@@ -4,21 +4,23 @@
 
 ## Core Web Vitals Targets
 
-| Metric | Good | Needs Work | Poor |
-|--------|------|------------|------|
-| **LCP** (Largest Contentful Paint) | < 2.5s | 2.5-4s | > 4s |
-| **INP** (Interaction to Next Paint) | < 200ms | 200-500ms | > 500ms |
-| **CLS** (Cumulative Layout Shift) | < 0.1 | 0.1-0.25 | > 0.25 |
+| Metric                              | Good    | Needs Work | Poor    |
+| ----------------------------------- | ------- | ---------- | ------- |
+| **LCP** (Largest Contentful Paint)  | < 2.5s  | 2.5-4s     | > 4s    |
+| **INP** (Interaction to Next Paint) | < 200ms | 200-500ms  | > 500ms |
+| **CLS** (Cumulative Layout Shift)   | < 0.1   | 0.1-0.25   | > 0.25  |
 
 ## Frontend Performance
 
 ### Critical Render Path
+
 - [ ] Minimize critical CSS (inline above-fold styles)
 - [ ] Defer non-critical JavaScript
 - [ ] Preload critical resources
 - [ ] Optimize font loading (font-display: swap)
 
 ### Images
+
 - [ ] Use modern formats (WebP, AVIF)
 - [ ] Implement lazy loading
 - [ ] Serve responsive sizes (srcset)
@@ -26,12 +28,14 @@
 - [ ] Set explicit width/height (prevent CLS)
 
 ### JavaScript
+
 - [ ] Code splitting (dynamic imports)
 - [ ] Tree shaking enabled
 - [ ] Bundle size monitored (< 200KB initial)
 - [ ] No unused dependencies
 
 ### Vue 3 Specific
+
 - [ ] Use `computed` for derived state — not methods called in templates
 - [ ] Use `v-memo` for expensive list items that rarely change
 - [ ] Use `shallowRef` / `shallowReactive` for large objects that don't need deep reactivity
@@ -40,11 +44,11 @@
 
 ```vue
 <script setup lang="ts">
-import { computed, shallowRef } from 'vue';
+import { computed, shallowRef } from "vue";
 
 // ✅ computed — cached, only recalculates when deps change
 const sortedItems = computed(() =>
-  [...props.items].sort((a, b) => a.name.localeCompare(b.name))
+  [...props.items].sort((a, b) => a.name.localeCompare(b.name)),
 );
 
 // ✅ shallowRef — large list, only track reference changes
@@ -62,6 +66,7 @@ const largeDataset = shallowRef<Row[]>([]);
 ## Backend Performance
 
 ### Database
+
 - [ ] Indexes on queried columns
 - [ ] No N+1 queries
 - [ ] Pagination implemented
@@ -113,6 +118,7 @@ async def get_user(user_id: str) -> dict:
 ```
 
 ### API
+
 - [ ] Response compression (gzip/brotli)
 - [ ] Pagination for lists
 - [ ] Select only needed fields
@@ -149,13 +155,13 @@ python -m pstats profile.stats
 
 ## Performance Budget
 
-| Resource | Budget |
-|----------|--------|
-| Initial JS | < 200KB |
-| Initial CSS | < 50KB |
-| Total page weight | < 1MB |
-| Time to Interactive | < 3s |
-| API response (p95) | < 200ms |
+| Resource            | Budget  |
+| ------------------- | ------- |
+| Initial JS          | < 200KB |
+| Initial CSS         | < 50KB  |
+| Total page weight   | < 1MB   |
+| Time to Interactive | < 3s    |
+| API response (p95)  | < 200ms |
 
 ## Monitoring
 
@@ -166,9 +172,9 @@ python -m pstats profile.stats
 
 ```javascript
 // Track Core Web Vitals
-import { onLCP, onINP, onCLS } from 'web-vitals';
+import { onLCP, onINP, onCLS } from "web-vitals";
 
-onLCP(metric => sendToAnalytics('LCP', metric.value));
-onINP(metric => sendToAnalytics('INP', metric.value));
-onCLS(metric => sendToAnalytics('CLS', metric.value));
+onLCP((metric) => sendToAnalytics("LCP", metric.value));
+onINP((metric) => sendToAnalytics("INP", metric.value));
+onCLS((metric) => sendToAnalytics("CLS", metric.value));
 ```

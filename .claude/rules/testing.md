@@ -1,6 +1,7 @@
 # Testing Standards
 
 ## Testing Pyramid
+
 ```
          [E2E Tests]         ← Few, slow, catch integration issues
        [Integration Tests]   ← Some, test component interaction
@@ -8,6 +9,7 @@
 ```
 
 ## Requirements
+
 - Unit test coverage: **minimum 80%**
 - All new features must have tests
 - All bug fixes must have a regression test
@@ -18,6 +20,7 @@
 ## JavaScript / Jest
 
 ### Test File Organization
+
 ```
 tests/
 ├── unit/
@@ -31,12 +34,13 @@ tests/
 ```
 
 ### Unit Test Example
+
 ```js
 // tests/unit/services/user-service.test.js
-import { UserService } from '../../../src/services/user-service.js';
-import { mockUserRepository } from '../../mocks/user-repository.mock.js';
+import { UserService } from "../../../src/services/user-service.js";
+import { mockUserRepository } from "../../mocks/user-repository.mock.js";
 
-describe('UserService', () => {
+describe("UserService", () => {
   let userService;
   let mockRepo;
 
@@ -45,50 +49,54 @@ describe('UserService', () => {
     userService = new UserService(mockRepo);
   });
 
-  describe('findById', () => {
-    it('should return user when found', async () => {
-      const mockUser = { id: '1', email: 'test@test.com' };
+  describe("findById", () => {
+    it("should return user when found", async () => {
+      const mockUser = { id: "1", email: "test@test.com" };
       mockRepo.findById.mockResolvedValue(mockUser);
 
-      const result = await userService.findById('1');
+      const result = await userService.findById("1");
 
       expect(result).toEqual(mockUser);
-      expect(mockRepo.findById).toHaveBeenCalledWith('1');
+      expect(mockRepo.findById).toHaveBeenCalledWith("1");
     });
 
-    it('should throw AppError when user not found', async () => {
+    it("should throw AppError when user not found", async () => {
       mockRepo.findById.mockResolvedValue(null);
-      await expect(userService.findById('999')).rejects.toThrow('User not found');
+      await expect(userService.findById("999")).rejects.toThrow(
+        "User not found",
+      );
     });
   });
 });
 ```
 
 ### Integration Test Example
+
 ```js
 // tests/integration/routes/users.test.js
-import request from 'supertest';
-import app from '../../../src/index.js';
+import request from "supertest";
+import app from "../../../src/index.js";
 
-describe('GET /api/users/:id', () => {
-  it('should return 200 with user data', async () => {
+describe("GET /api/users/:id", () => {
+  it("should return 200 with user data", async () => {
     const res = await request(app)
-      .get('/api/users/1')
-      .set('Authorization', `Bearer ${testToken}`);
+      .get("/api/users/1")
+      .set("Authorization", `Bearer ${testToken}`);
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
   });
 
-  it('should return 404 for unknown user', async () => {
+  it("should return 404 for unknown user", async () => {
     const res = await request(app)
-      .get('/api/users/99999')
-      .set('Authorization', `Bearer ${testToken}`);
+      .get("/api/users/99999")
+      .set("Authorization", `Bearer ${testToken}`);
     expect(res.status).toBe(404);
   });
 });
 ```
 
 ### Test Commands (JS)
+
 ```bash
 npm test                    # Run all tests
 npm run test:unit           # Unit tests only
@@ -98,6 +106,7 @@ npm run test:watch          # Watch mode
 ```
 
 ### Naming Conventions (JS)
+
 - Test files: `[filename].test.js`
 - `describe` blocks: match the module/function being tested
 - `it` blocks: `should [expected behavior] when [condition]`
@@ -107,6 +116,7 @@ npm run test:watch          # Watch mode
 ## Python / pytest + httpx
 
 ### Test File Organization
+
 ```
 tests/
 ├── unit/
@@ -121,6 +131,7 @@ tests/
 ```
 
 ### conftest.py (fixtures)
+
 ```python
 # tests/conftest.py
 import pytest
@@ -168,6 +179,7 @@ async def client(db_session: AsyncSession):
 ```
 
 ### Unit Test Example
+
 ```python
 # tests/unit/services/test_user_service.py
 import pytest
@@ -213,6 +225,7 @@ async def test_find_by_id_raises_when_not_found(user_service, mock_repo):
 ```
 
 ### Integration Test Example
+
 ```python
 # tests/integration/routes/test_users.py
 import pytest
@@ -240,6 +253,7 @@ async def test_get_user_unauthenticated_returns_401(client):
 ```
 
 ### Test Commands (Python)
+
 ```bash
 pytest                              # Run all tests
 pytest tests/unit/                  # Unit tests only
@@ -250,6 +264,7 @@ pytest -k "test_user"               # Filter by name
 ```
 
 ### Naming Conventions (Python)
+
 - Test files: `test_[module].py`
 - Test functions: `test_[behavior]_when_[condition]`
 - Fixtures: descriptive noun (`user_service`, `auth_headers`, `test_user`)
@@ -259,6 +274,7 @@ pytest -k "test_user"               # Filter by name
 ## Vue 3 / Vitest + Vue Testing Library
 
 ### Test File Organization
+
 ```
 tests/
 ├── unit/
@@ -274,56 +290,60 @@ tests/
 ```
 
 ### Component Test Example
+
 ```typescript
 // tests/unit/components/BaseButton.test.ts
-import { describe, it, expect, vi } from 'vitest';
-import { render, fireEvent } from '@testing-library/vue';
-import BaseButton from '@/components/ui/BaseButton.vue';
+import { describe, it, expect, vi } from "vitest";
+import { render, fireEvent } from "@testing-library/vue";
+import BaseButton from "@/components/ui/BaseButton.vue";
 
-describe('BaseButton', () => {
-  it('renders slot content', () => {
-    const { getByText } = render(BaseButton, { slots: { default: 'Click me' } });
-    expect(getByText('Click me')).toBeInTheDocument();
+describe("BaseButton", () => {
+  it("renders slot content", () => {
+    const { getByText } = render(BaseButton, {
+      slots: { default: "Click me" },
+    });
+    expect(getByText("Click me")).toBeInTheDocument();
   });
 
-  it('emits click event when clicked', async () => {
+  it("emits click event when clicked", async () => {
     const { getByRole, emitted } = render(BaseButton, {
-      slots: { default: 'Click' },
+      slots: { default: "Click" },
     });
-    await fireEvent.click(getByRole('button'));
+    await fireEvent.click(getByRole("button"));
     expect(emitted().click).toHaveLength(1);
   });
 
-  it('is disabled when loading prop is true', () => {
+  it("is disabled when loading prop is true", () => {
     const { getByRole } = render(BaseButton, {
       props: { loading: true },
-      slots: { default: 'Loading' },
+      slots: { default: "Loading" },
     });
-    expect(getByRole('button')).toBeDisabled();
+    expect(getByRole("button")).toBeDisabled();
   });
 });
 ```
 
 ### Composable Test Example
+
 ```typescript
 // tests/unit/composables/useDebounce.test.ts
-import { describe, it, expect, vi } from 'vitest';
-import { ref } from 'vue';
-import { useDebounce } from '@/composables/useDebounce';
+import { describe, it, expect, vi } from "vitest";
+import { ref } from "vue";
+import { useDebounce } from "@/composables/useDebounce";
 
-describe('useDebounce', () => {
-  it('debounces value changes by the specified delay', async () => {
+describe("useDebounce", () => {
+  it("debounces value changes by the specified delay", async () => {
     vi.useFakeTimers();
-    const value = ref('initial');
+    const value = ref("initial");
     const debounced = useDebounce(value, 300);
 
-    expect(debounced.value).toBe('initial');
+    expect(debounced.value).toBe("initial");
 
-    value.value = 'updated';
-    expect(debounced.value).toBe('initial');   // not yet
+    value.value = "updated";
+    expect(debounced.value).toBe("initial"); // not yet
 
     vi.advanceTimersByTime(300);
-    expect(debounced.value).toBe('updated');   // now updated
+    expect(debounced.value).toBe("updated"); // now updated
 
     vi.useRealTimers();
   });
@@ -331,31 +351,32 @@ describe('useDebounce', () => {
 ```
 
 ### Pinia Store Test
+
 ```typescript
 // tests/unit/stores/useUserStore.test.ts
-import { describe, it, expect, beforeEach } from 'vitest';
-import { setActivePinia, createPinia } from 'pinia';
-import { useUserStore } from '@/stores/useUserStore';
+import { describe, it, expect, beforeEach } from "vitest";
+import { setActivePinia, createPinia } from "pinia";
+import { useUserStore } from "@/stores/useUserStore";
 
-describe('useUserStore', () => {
+describe("useUserStore", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
   });
 
-  it('isAuthenticated is false when no token', () => {
+  it("isAuthenticated is false when no token", () => {
     const store = useUserStore();
     expect(store.isAuthenticated).toBe(false);
   });
 
-  it('isAuthenticated is true after setToken', () => {
+  it("isAuthenticated is true after setToken", () => {
     const store = useUserStore();
-    store.setToken('abc123');
+    store.setToken("abc123");
     expect(store.isAuthenticated).toBe(true);
   });
 
-  it('clears state on logout', () => {
+  it("clears state on logout", () => {
     const store = useUserStore();
-    store.setToken('abc123');
+    store.setToken("abc123");
     store.logout();
     expect(store.token).toBeNull();
     expect(store.isAuthenticated).toBe(false);
@@ -364,6 +385,7 @@ describe('useUserStore', () => {
 ```
 
 ### Test Commands (Vue / Vitest)
+
 ```bash
 npm run test              # Run all tests (watch mode)
 npm run test:run          # Run once (CI)
@@ -373,6 +395,7 @@ npx vitest run --reporter=verbose
 ```
 
 ### Naming Conventions (Vue)
+
 - Test files: `[ComponentName].test.ts` or `use[Name].test.ts`
 - `describe` blocks: component or composable name
 - `it` blocks: `[action/state] when [condition]`

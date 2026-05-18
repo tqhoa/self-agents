@@ -70,20 +70,20 @@ All rules in `.claude/rules/` are **mandatory** and must be followed:
 
 ### Architecture & Design
 
-| Rule                   | Description                                                              |
-| ---------------------- | ------------------------------------------------------------------------ |
+| Rule                   | Description                                                               |
+| ---------------------- | ------------------------------------------------------------------------- |
 | `tech-stack.md`        | Technology selection guide — frameworks, libraries, decision criteria     |
-| `system-design.md`     | CAP theorem, caching, scaling, queues                                    |
-| `project-structure.md` | Layered architecture, folder organization (JS + Python)                  |
-| `api-conventions.md`   | REST standards, response envelopes                                       |
+| `system-design.md`     | CAP theorem, caching, scaling, queues                                     |
+| `project-structure.md` | Layered architecture, folder organization (JS + Python)                   |
+| `api-conventions.md`   | REST standards, response envelopes                                        |
 | `vue-patterns.md`      | Vue 3 component, composable, Pinia, TanStack Query, form, router patterns |
 
 ### Data & Naming
 
-| Rule                    | Description                                              |
-| ----------------------- | -------------------------------------------------------- |
-| `naming-conventions.md` | Cache keys, DB, queues, env vars                         |
-| `database.md`           | SQLAlchemy async + Prisma patterns, transactions, N+1    |
+| Rule                    | Description                                           |
+| ----------------------- | ----------------------------------------------------- |
+| `naming-conventions.md` | Cache keys, DB, queues, env vars                      |
+| `database.md`           | SQLAlchemy async + Prisma patterns, transactions, N+1 |
 
 ### Operations
 

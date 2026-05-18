@@ -13,16 +13,18 @@
 ## Environment Variables
 
 **JavaScript:**
+
 ```js
 // ✅ Always use environment variables for secrets
 const dbPassword = process.env.DB_PASSWORD;
 const jwtSecret = process.env.JWT_SECRET;
 
 // ❌ Never hardcode secrets
-const dbPassword = 'mypassword123';
+const dbPassword = "mypassword123";
 ```
 
 **Python (pydantic-settings):**
+
 ```python
 # ✅ shared/config.py — loaded once, validated at startup
 from pydantic_settings import BaseSettings
@@ -43,21 +45,23 @@ settings = Settings()  # raises ValidationError if any required var is missing
 ## Input Validation
 
 **JavaScript (Zod):**
+
 ```js
 // ✅ Validate all incoming data with a schema
-import { z } from 'zod';
+import { z } from "zod";
 
 const loginSchema = z.object({
   email: z.string().email().max(255),
-  password: z.string().min(8).max(128)
+  password: z.string().min(8).max(128),
 });
 
 // Sanitize HTML to prevent XSS (client-side rendering)
-import DOMPurify from 'dompurify';
+import DOMPurify from "dompurify";
 const cleanContent = DOMPurify.sanitize(userInput);
 ```
 
 **Python (Pydantic v2):**
+
 ```python
 # ✅ FastAPI validates all request bodies against Pydantic schemas automatically
 from pydantic import BaseModel, EmailStr, field_validator
@@ -83,14 +87,16 @@ class LoginRequest(BaseModel):
 - Implement rate limiting on auth endpoints
 
 **JavaScript:**
+
 ```js
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 const SALT_ROUNDS = 12;
 const hashed = await bcrypt.hash(password, SALT_ROUNDS);
 const valid = await bcrypt.compare(plain, hashed);
 ```
 
 **Python (passlib):**
+
 ```python
 from passlib.context import CryptContext
 
@@ -108,17 +114,24 @@ def verify_password(plain: str, hashed: str) -> bool:
 ## Authorization
 
 **JavaScript:**
+
 ```js
 // ✅ Check permissions on every protected route
-router.delete('/posts/:id', authenticate, authorize('admin'), asyncHandler(deletePost));
+router.delete(
+  "/posts/:id",
+  authenticate,
+  authorize("admin"),
+  asyncHandler(deletePost),
+);
 
 // ✅ Verify resource ownership
-if (post.authorId !== req.user.id && req.user.role !== 'admin') {
-  throw new AppError('Forbidden', 403);
+if (post.authorId !== req.user.id && req.user.role !== "admin") {
+  throw new AppError("Forbidden", 403);
 }
 ```
 
 **Python (FastAPI dependency):**
+
 ```python
 # ✅ Inject auth dependency on every protected endpoint
 from fastapi import Depends
@@ -138,17 +151,21 @@ async def delete_post(post_id: str, current_user: User = Depends(get_current_use
 ## HTTP Security Headers
 
 **JavaScript (Helmet.js):**
+
 ```js
-import helmet from 'helmet';
+import helmet from "helmet";
 app.use(helmet());
 
-app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || [],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.ALLOWED_ORIGINS?.split(",") || [],
+    credentials: true,
+  }),
+);
 ```
 
 **Python (FastAPI + starlette):**
+
 ```python
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
@@ -168,17 +185,19 @@ app.add_middleware(
 ## Rate Limiting
 
 **JavaScript (express-rate-limit):**
+
 ```js
-import rateLimit from 'express-rate-limit';
+import rateLimit from "express-rate-limit";
 
 const apiLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
 const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 5 });
 
-app.use('/api/', apiLimiter);
-app.use('/api/auth/', authLimiter);
+app.use("/api/", apiLimiter);
+app.use("/api/auth/", authLimiter);
 ```
 
 **Python (slowapi):**
+
 ```python
 from slowapi import Limiter
 from slowapi.util import get_remote_address

@@ -30,12 +30,14 @@
 ## Screen Readers
 
 ### Semantic HTML
+
 - [ ] Use semantic elements (`<nav>`, `<main>`, `<article>`, etc.)
 - [ ] Headings in logical order (h1 → h2 → h3)
 - [ ] Lists use `<ul>`, `<ol>`, `<dl>`
 - [ ] Tables have `<th>` with scope
 
 ### ARIA
+
 - [ ] Images have alt text (empty `alt=""` for decorative)
 - [ ] Form inputs have labels
 - [ ] Buttons have accessible names
@@ -60,17 +62,20 @@
 ## Visual Design
 
 ### Color
+
 - [ ] Color contrast ratio ≥ 4.5:1 (text)
 - [ ] Color contrast ratio ≥ 3:1 (large text, UI components)
 - [ ] Information not conveyed by color alone
 - [ ] Links distinguishable from text (underline or contrast)
 
 ### Text
+
 - [ ] Text resizable to 200% without loss
 - [ ] Line height ≥ 1.5
 - [ ] No text in images (except logos)
 
 ### Motion
+
 - [ ] Respect `prefers-reduced-motion`
 - [ ] No flashing content (> 3 flashes/second)
 - [ ] Animations can be paused
@@ -108,17 +113,20 @@
 ## Interactive Components
 
 ### Buttons & Links
+
 - [ ] Buttons for actions, links for navigation
 - [ ] Link text is descriptive (not "click here")
 - [ ] Disabled state communicated
 
 ### Modals/Dialogs
+
 - [ ] Focus trapped inside modal
 - [ ] Close with Escape key
 - [ ] Focus returns on close
 - [ ] `role="dialog"` and `aria-modal="true"`
 
 ### Menus & Dropdowns
+
 - [ ] Arrow key navigation
 - [ ] `role="menu"` and `role="menuitem"`
 - [ ] Current item indicated
@@ -137,6 +145,7 @@ npx pa11y https://example.com
 ```
 
 ### Manual Testing
+
 - [ ] Navigate with keyboard only
 - [ ] Test with screen reader (VoiceOver/NVDA)
 - [ ] Zoom to 200%
@@ -145,25 +154,25 @@ npx pa11y https://example.com
 
 ## ARIA Roles Quick Reference
 
-| Role | Use For |
-|------|---------|
-| `button` | Clickable elements (prefer `<button>`) |
-| `link` | Navigation (prefer `<a>`) |
-| `dialog` | Modal windows |
-| `alert` | Important messages |
-| `status` | Status updates |
-| `navigation` | Nav sections (prefer `<nav>`) |
-| `main` | Main content (prefer `<main>`) |
-| `region` | Distinct sections with label |
-| `tablist`, `tab`, `tabpanel` | Tab interfaces |
+| Role                         | Use For                                |
+| ---------------------------- | -------------------------------------- |
+| `button`                     | Clickable elements (prefer `<button>`) |
+| `link`                       | Navigation (prefer `<a>`)              |
+| `dialog`                     | Modal windows                          |
+| `alert`                      | Important messages                     |
+| `status`                     | Status updates                         |
+| `navigation`                 | Nav sections (prefer `<nav>`)          |
+| `main`                       | Main content (prefer `<main>`)         |
+| `region`                     | Distinct sections with label           |
+| `tablist`, `tab`, `tabpanel` | Tab interfaces                         |
 
 ## Common Issues
 
-| Issue | Fix |
-|-------|-----|
-| Missing alt text | Add descriptive alt or `alt=""` |
-| Low contrast | Increase color contrast |
-| Missing form labels | Add `<label>` elements |
-| Focus not visible | Don't remove outline, style it |
-| Mouse-only interactions | Add keyboard handlers |
-| Auto-playing media | Add controls, respect preferences |
+| Issue                   | Fix                               |
+| ----------------------- | --------------------------------- |
+| Missing alt text        | Add descriptive alt or `alt=""`   |
+| Low contrast            | Increase color contrast           |
+| Missing form labels     | Add `<label>` elements            |
+| Focus not visible       | Don't remove outline, style it    |
+| Mouse-only interactions | Add keyboard handlers             |
+| Auto-playing media      | Add controls, respect preferences |

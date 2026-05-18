@@ -1,6 +1,7 @@
 # Error Handling
 
 ## Core Principles
+
 - **Never swallow errors silently** — always log or rethrow
 - Use a centralized error handler
 - Return consistent error responses to the API
@@ -11,12 +12,13 @@
 ## JavaScript / Express
 
 ### Custom Error Class
+
 ```js
 // src/utils/app-error.js
 class AppError extends Error {
-  constructor(message, statusCode = 500, code = 'INTERNAL_ERROR') {
+  constructor(message, statusCode = 500, code = "INTERNAL_ERROR") {
     super(message);
-    this.name = 'AppError';
+    this.name = "AppError";
     this.statusCode = statusCode;
     this.code = code;
     this.isOperational = true;
@@ -28,24 +30,30 @@ export default AppError;
 ```
 
 ### Throwing Errors
+
 ```js
-if (!user) throw new AppError('User not found', 404, 'USER_NOT_FOUND');
-if (!hasPermission) throw new AppError('Forbidden', 403, 'ACCESS_DENIED');
+if (!user) throw new AppError("User not found", 404, "USER_NOT_FOUND");
+if (!hasPermission) throw new AppError("Forbidden", 403, "ACCESS_DENIED");
 ```
 
 ### Async Error Handling
+
 ```js
 // ✅ Wrap async route handlers
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
 
-router.get('/users/:id', asyncHandler(async (req, res) => {
-  const user = await userService.findById(req.params.id);
-  res.json({ success: true, data: user });
-}));
+router.get(
+  "/users/:id",
+  asyncHandler(async (req, res) => {
+    const user = await userService.findById(req.params.id);
+    res.json({ success: true, data: user });
+  }),
+);
 ```
 
 ### Global Error Handler (Express)
+
 ```js
 // middleware/error-handler.js
 export function errorHandler(err, req, res, next) {
@@ -55,22 +63,26 @@ export function errorHandler(err, req, res, next) {
   if (!err.isOperational) {
     return res.status(500).json({
       success: false,
-      error: { code: 'INTERNAL_ERROR', message: 'An unexpected error occurred' }
+      error: {
+        code: "INTERNAL_ERROR",
+        message: "An unexpected error occurred",
+      },
     });
   }
 
   res.status(statusCode).json({
     success: false,
-    error: { code: err.code, message: err.message }
+    error: { code: err.code, message: err.message },
   });
 }
 ```
 
 ### Validation Errors (Zod)
+
 ```js
 const result = userSchema.safeParse(data);
 if (!result.success) {
-  throw new AppError('Validation failed', 422, 'VALIDATION_ERROR');
+  throw new AppError("Validation failed", 422, "VALIDATION_ERROR");
 }
 ```
 
@@ -79,6 +91,7 @@ if (!result.success) {
 ## Python / FastAPI
 
 ### AppError Class
+
 ```python
 # shared/exceptions.py
 class AppError(Exception):
@@ -90,6 +103,7 @@ class AppError(Exception):
 ```
 
 ### Throwing Errors
+
 ```python
 if not user:
     raise AppError("User not found", 404, "USER_NOT_FOUND")
@@ -99,6 +113,7 @@ if not has_permission:
 ```
 
 ### Global Exception Handlers (FastAPI)
+
 ```python
 # main.py
 from fastapi import Request
@@ -140,6 +155,7 @@ async def unhandled_error_handler(request: Request, exc: Exception) -> JSONRespo
 ```
 
 ### Catching Specific Exceptions
+
 ```python
 # ✅ Catch specific, preserve traceback with 'from'
 try:

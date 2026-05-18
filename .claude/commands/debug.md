@@ -45,6 +45,7 @@ curl -X POST http://localhost:8000/api/v1/resource \
 ```
 
 **If not reproducible**, investigate:
+
 - Timing/race conditions
 - Environment differences (dev vs CI)
 - State leakage between tests
@@ -54,16 +55,16 @@ curl -X POST http://localhost:8000/api/v1/resource \
 
 Identify which layer fails:
 
-| Layer | Symptoms |
-|-------|----------|
-| **Frontend (Vue)** | Render errors, missing elements, wrong display |
-| **API (FastAPI)** | 4xx/5xx responses, 422 validation errors, 500 unhandled |
-| **Service layer** | Wrong business logic output, missing domain event |
+| Layer                     | Symptoms                                                    |
+| ------------------------- | ----------------------------------------------------------- |
+| **Frontend (Vue)**        | Render errors, missing elements, wrong display              |
+| **API (FastAPI)**         | 4xx/5xx responses, 422 validation errors, 500 unhandled     |
+| **Service layer**         | Wrong business logic output, missing domain event           |
 | **Database (SQLAlchemy)** | `MissingGreenlet`, N+1, constraint violation, stale session |
-| **Migration (Alembic)** | `relation does not exist`, column mismatch |
-| **Build** | `mypy` errors, `tsc` errors, missing deps |
-| **External** | Third-party API failures, network issues |
-| **Test itself** | Flaky assertion, wrong expectations, shared state |
+| **Migration (Alembic)**   | `relation does not exist`, column mismatch                  |
+| **Build**                 | `mypy` errors, `tsc` errors, missing deps                   |
+| **External**              | Third-party API failures, network issues                    |
+| **Test itself**           | Flaky assertion, wrong expectations, shared state           |
 
 **Use `git bisect` for regressions:**
 
@@ -79,6 +80,7 @@ git bisect reset   # when done
 Strip away unrelated elements — isolate the failing unit:
 
 **Python:**
+
 ```python
 # Original complex failing code
 result = await order_service.create(user_id, cart_id, payment_data)
@@ -94,13 +96,14 @@ result = await order_service.create(user, cart, payment_data)
 ```
 
 **JavaScript:**
+
 ```javascript
 // Reduce to find which call fails
 const config = await getConfig();
-console.log('[DEBUG] config:', config);
+console.log("[DEBUG] config:", config);
 
 const data = await fetchData();
-console.log('[DEBUG] data:', data);
+console.log("[DEBUG] data:", data);
 
 const result = await processOrder(config, data);
 ```
@@ -109,21 +112,22 @@ const result = await processOrder(config, data);
 
 **Fix the actual problem, not the symptom:**
 
-| Symptom | Bad Fix | Good Fix |
-|---------|---------|----------|
-| Duplicate list items | Dedupe in UI | Fix query returning duplicates |
-| `MissingGreenlet` error | Wrap in `asyncio.run()` | Use `expire_on_commit=False` in session factory |
-| 422 Unprocessable Entity | Catch and ignore | Fix Pydantic schema to match request shape |
-| N+1 queries | Cache result in loop | Add `selectinload()` to the base query |
-| Null reference | Add `?.` everywhere | Ensure data loaded before access |
-| Slow API response | Increase timeout | Optimize the query or add index |
-| Flaky test | Add retry logic | Fix the race condition or shared state |
+| Symptom                  | Bad Fix                 | Good Fix                                        |
+| ------------------------ | ----------------------- | ----------------------------------------------- |
+| Duplicate list items     | Dedupe in UI            | Fix query returning duplicates                  |
+| `MissingGreenlet` error  | Wrap in `asyncio.run()` | Use `expire_on_commit=False` in session factory |
+| 422 Unprocessable Entity | Catch and ignore        | Fix Pydantic schema to match request shape      |
+| N+1 queries              | Cache result in loop    | Add `selectinload()` to the base query          |
+| Null reference           | Add `?.` everywhere     | Ensure data loaded before access                |
+| Slow API response        | Increase timeout        | Optimize the query or add index                 |
+| Flaky test               | Add retry logic         | Fix the race condition or shared state          |
 
 ### Step 5: Guard Against Recurrence
 
 Write a regression test before fixing:
 
 **Python:**
+
 ```python
 @pytest.mark.asyncio
 async def test_get_order_items_returns_no_duplicates(client, auth_headers, seed_order):
@@ -133,11 +137,12 @@ async def test_get_order_items_returns_no_duplicates(client, auth_headers, seed_
 ```
 
 **JavaScript:**
+
 ```javascript
-it('should not return duplicate items (regression)', async () => {
+it("should not return duplicate items (regression)", async () => {
   await createOrder({ items: [item, item] });
   const result = await getOrderItems();
-  const ids = result.map(r => r.id);
+  const ids = result.map((r) => r.id);
   expect(ids).toEqual([...new Set(ids)]);
 });
 ```
@@ -281,13 +286,13 @@ git bisect reset  # done
 
 ## Common Rationalizations (Avoid)
 
-| Excuse | Reality |
-|--------|---------|
+| Excuse                | Reality                          |
+| --------------------- | -------------------------------- |
 | "Works on my machine" | Environment differences are bugs |
-| "It's just flaky" | Flaky tests have root causes |
-| "Let's just retry" | Retries hide real problems |
-| "Third-party issue" | Still need to handle gracefully |
-| "Fix it later" | Tech debt compounds |
+| "It's just flaky"     | Flaky tests have root causes     |
+| "Let's just retry"    | Retries hide real problems       |
+| "Third-party issue"   | Still need to handle gracefully  |
+| "Fix it later"        | Tech debt compounds              |
 
 ---
 
