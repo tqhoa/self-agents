@@ -192,7 +192,7 @@ All 13 rules in `.claude/rules/` must be followed:
 ```bash
 # Clone repository
 git clone <repo-url>
-cd ai-agent
+cd self-agents
 
 # Copy to your project
 cp -r .claude/ /path/to/your/project/
@@ -283,7 +283,7 @@ Build features end-to-end, not layer-by-layer:
 
 ---
 
-## Credits
+## References
 
 - Workflow inspired by [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)
 - Best practices from _Software Engineering at Google_
